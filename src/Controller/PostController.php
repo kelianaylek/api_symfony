@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Controller;
 
 use App\Entity\Post;
@@ -64,13 +63,12 @@ class PostController
      * @return JsonResponse
      */
     public function post(
-         Request $request,
-         SerializerInterface $serializer,
-         EntityManagerInterface $entityManager,
-         UrlGeneratorInterface $urlGenerator,
-         int $userId
-    ): JsonResponse
-    {
+        Request $request,
+        SerializerInterface $serializer,
+        EntityManagerInterface $entityManager,
+        UrlGeneratorInterface $urlGenerator,
+        int $userId
+    ): JsonResponse {
         $post = $serializer->deserialize($request->getContent(), Post::class, "json");
 
         $author = $entityManager->getRepository(User::class)->find($userId);
@@ -85,7 +83,6 @@ class PostController
             ["Location" => $urlGenerator->generate("api_posts_item_get", ["id" => $post->getId()])],
             true
         );
-
     }
 
     /**
@@ -101,14 +98,13 @@ class PostController
         Request $request,
         SerializerInterface $serializer,
         EntityManagerInterface $entityManager
-    ): JsonResponse
-    {
-
+    ): JsonResponse {
         $serializer->deserialize(
             $request->getContent(),
             Post::class,
             "json",
-            [AbstractNormalizer::OBJECT_TO_POPULATE => $post ]);
+            [AbstractNormalizer::OBJECT_TO_POPULATE => $post ]
+        );
 
         $entityManager->flush();
 
@@ -127,8 +123,7 @@ class PostController
     public function delete(
         Post $post,
         EntityManagerInterface $entityManager
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $entityManager->remove($post);
         $entityManager->flush();
 
@@ -138,3 +133,4 @@ class PostController
         );
     }
 }
+

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Controller;
 
 use App\Repository\CommentRepository;
@@ -48,7 +47,7 @@ class CommentController
     public function item(Comment $comment, SerializerInterface  $serializer): JsonResponse
     {
         return new JsonResponse(
-            $serializer->serialize($comment, "json",),
+            $serializer->serialize($comment, "json", ),
             JsonResponse::HTTP_OK,
             [],
             true
@@ -72,17 +71,12 @@ class CommentController
         UrlGeneratorInterface $urlGenerator,
         int $userId,
         int $postId
-    ): JsonResponse
-
-    {
+    ): JsonResponse {
         $comment = $serializer->deserialize($request->getContent(), Comment::class, "json");
-
         $author = $entityManager->getRepository(User::class)->find($userId);
         $comment->setAuthor($author);
-
         $post = $entityManager->getRepository(Post::class)->find($postId);
         $comment->setPost($post);
-
         $entityManager->persist($comment);
         $entityManager->flush();
 
@@ -92,7 +86,6 @@ class CommentController
             ["Location" => $urlGenerator->generate("api_comments_item_get", ["id" => $comment->getId()])],
             true
         );
-
     }
 
     /**
@@ -108,14 +101,13 @@ class CommentController
         Request $request,
         SerializerInterface $serializer,
         EntityManagerInterface $entityManager
-    ): JsonResponse
-    {
-
+    ): JsonResponse {
         $serializer->deserialize(
             $request->getContent(),
             Comment::class,
             "json",
-            [AbstractNormalizer::OBJECT_TO_POPULATE => $comment ]);
+            [AbstractNormalizer::OBJECT_TO_POPULATE => $comment ]
+        );
 
         $entityManager->flush();
 
@@ -135,8 +127,7 @@ class CommentController
     public function delete(
         Comment $comment,
         EntityManagerInterface $entityManager
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $entityManager->remove($comment);
         $entityManager->flush();
 
@@ -146,3 +137,4 @@ class CommentController
         );
     }
 }
+
