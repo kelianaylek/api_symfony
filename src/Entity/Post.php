@@ -1,11 +1,12 @@
 <?php
 
-
 namespace App\Entity;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+
 /**
  * Class Post
  * @package App\Entity
@@ -64,10 +65,10 @@ class Post
     }
 
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->publishedAt = new \DateTimeImmutable();
         $this->likedBy = new ArrayCollection();
-
     }
 
     /**
@@ -136,7 +137,7 @@ class Post
 
     public function likeBy(User $user): void
     {
-        if($this->likedBy->contains($user)){
+        if ($this->likedBy->contains($user)) {
             return;
         }
         $this->likedBy->add($user);
@@ -144,10 +145,10 @@ class Post
 
     public function dislikeBy(User $user): void
     {
-        if(!$this->likedBy->contains($user)){
+        if (!$this->likedBy->contains($user)) {
             return;
         }
         $this->likedBy->removeElement($user);
     }
-
 }
+
