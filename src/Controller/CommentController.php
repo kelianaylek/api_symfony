@@ -23,119 +23,90 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
  */
 class CommentController extends AbstractController
 {
+    private EntityManagerInterface $entityManager;
+    private CommentRepository $commentRepository;
+    private SerializerInterface $serializer;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        UrlGeneratorInterface $urlGenerator,
+        CommentRepository $commentRepository,
+        SerializerInterface $serializer )
+    {
+        $this->entityManager = $entityManager ;
+        $this->commentRepository = $commentRepository ;
+        $this->serializer = $serializer ;
+    }
+
     /**
-     * @param CommentRepository $commentRepository
-     * @param SerializerInterface $serializer
      * @return JsonResponse
      * @Route(name="api_comments_collection_get", methods={"GET"})
      */
-    public function collection(CommentRepository $commentRepository, SerializerInterface $serializer): JsonResponse
+    public function collection(): JsonResponse
     {
-        return new JsonResponse(
-            $serializer->serialize($commentRepository->findAll(), "json"),
-            JsonResponse::HTTP_OK,
-            [],
-            true
-        );
+        $comments = $this->commentRepository->findAll();
+        return $this->json($comments);
     }
 
     /**
      * @Route("/{id}", name="api_comments_item_get", methods={"GET"})
      * @param Comment $comment
-     * @param SerializerInterface $serializer
      * @return JsonResponse
      */
-    public function item(Comment $comment, SerializerInterface  $serializer): JsonResponse
+    public function item(Comment $comment): JsonResponse
     {
-        return new JsonResponse(
-            $serializer->serialize($comment, "json", ),
-            JsonResponse::HTTP_OK,
-            [],
-            true
-        );
+        return $this->json($comment);
     }
 
     /**
      * @Route("/{postId}/{userId}", name="api_comments_post_comment", methods={"POST"})
      * @param Request $request
-     * @param SerializerInterface $serializer
-     * @param EntityManagerInterface $entityManager
-     * @param UrlGeneratorInterface $urlGenerator
      * @param int $userId
      * @param int $postId
      * @return JsonResponse
      */
-    public function comment(
-        Request $request,
-        SerializerInterface $serializer,
-        EntityManagerInterface $entityManager,
-        UrlGeneratorInterface $urlGenerator,
-        int $userId,
-        int $postId
-    ): JsonResponse {
-        $comment = $serializer->deserialize($request->getContent(), Comment::class, "json");
-        $author = $entityManager->getRepository(User::class)->find($userId);
-        $comment->setAuthor($author);
-        $post = $entityManager->getRepository(Post::class)->find($postId);
-        $comment->setPost($post);
-        $entityManager->persist($comment);
-        $entityManager->flush();
+    public function comment(Request $request, int $userId, int $postId): JsonResponse {
+        $comment = $this->serializer->deserialize($request->getContent(), Comment::class, "json");
 
-        return new JsonResponse(
-            $serializer->serialize($comment, "json"),
-            JsonResponse::HTTP_CREATED,
-            ["Location" => $urlGenerator->generate("api_comments_item_get", ["id" => $comment->getId()])],
-            true
-        );
+        $author = $this->entityManager->getRepository(User::class)->find($userId);
+        $comment->setAuthor($author);
+        $post = $this->entityManager->getRepository(Post::class)->find($postId);
+        $comment->setPost($post);
+        $this->entityManager->persist($comment);
+        $this->entityManager->flush();
+
+        return $this->json($comment, 201);
+
     }
 
     /**
      * @Route("/{id}", name="api_comments_item_put", methods={"PUT"})
-     * @param Comment $comment
      * @param Request $request
-     * @param SerializerInterface $serializer
-     * @param EntityManagerInterface $entityManager
+     * @param Comment $comment
      * @return JsonResponse
      */
-    public function put(
-        Comment $comment,
-        Request $request,
-        SerializerInterface $serializer,
-        EntityManagerInterface $entityManager
-    ): JsonResponse {
-        $serializer->deserialize(
+    public function put(Request $request, Comment $comment): JsonResponse {
+        $this->serializer->deserialize(
             $request->getContent(),
             Comment::class,
             "json",
             [AbstractNormalizer::OBJECT_TO_POPULATE => $comment ]
         );
+        $this->entityManager->flush();
 
-        $entityManager->flush();
-
-        return new JsonResponse(
-            null,
-            JsonResponse::HTTP_NO_CONTENT,
-        );
+        return $this->json($comment, 200);
     }
-
 
     /**
      * @Route("/{id}", name="api_comments_item_delete", methods={"DELETE"})
      * @param Comment $comment
-     * @param EntityManagerInterface $entityManager
      * @return JsonResponse
      */
-    public function delete(
-        Comment $comment,
-        EntityManagerInterface $entityManager
-    ): JsonResponse {
-        $entityManager->remove($comment);
-        $entityManager->flush();
+    public function delete(Comment $comment): JsonResponse {
+        $this->entityManager->remove($comment);
+        $this->entityManager->flush();
 
-        return new JsonResponse(
-            null,
-            JsonResponse::HTTP_NO_CONTENT,
-        );
+        return $this->json(204);
     }
 }
 
