@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\CommentRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Entity\Post;
@@ -20,7 +21,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
  * @package App\Controller
  * @Route("/api/comments")
  */
-class CommentController
+class CommentController extends AbstractController
 {
     /**
      * @param CommentRepository $commentRepository

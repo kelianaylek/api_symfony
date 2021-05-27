@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,7 +20,7 @@ use Symfony\Component\Serializer\SerializerInterface;
  * @package App\Controller
  * @Route("/api/posts")
  */
-class PostController
+class PostController extends AbstractController
 {
     /**
      * @param PostRepository $postRepository
