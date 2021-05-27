@@ -22,116 +22,84 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class PostController extends AbstractController
 {
+    private EntityManagerInterface $entityManager;
+    private PostRepository $postRepository;
+    private SerializerInterface $serializer;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        PostRepository $postRepository,
+        SerializerInterface $serializer )
+    {
+        $this->entityManager = $entityManager ;
+        $this->postRepository = $postRepository ;
+        $this->serializer = $serializer ;
+    }
+
     /**
-     * @param PostRepository $postRepository
-     * @param SerializerInterface $serializer
      * @return JsonResponse
      * @Route(name="api_posts_collection_get", methods={"GET"})
      */
-    public function collection(PostRepository $postRepository, SerializerInterface $serializer): JsonResponse
+    public function collection(): JsonResponse
     {
-        return new JsonResponse(
-            $serializer->serialize($postRepository->findAll(), "json", ["groups" => "get"]),
-            JsonResponse::HTTP_OK,
-            [],
-            true
-        );
+        $posts = $this->postRepository->findAll();
+        return $this->json($posts);
     }
 
     /**
      * @Route("/{id}", name="api_posts_item_get", methods={"GET"})
      * @param Post $post
-     * @param SerializerInterface $serializer
      * @return JsonResponse
      */
-    public function item(Post $post, SerializerInterface  $serializer): JsonResponse
+    public function item(Post $post): JsonResponse
     {
-        return new JsonResponse(
-            $serializer->serialize($post, "json", ["groups" => "get"]),
-            JsonResponse::HTTP_OK,
-            [],
-            true
-        );
+        return $this->json($post);
     }
 
     /**
      * @Route("/{userId}", name="api_posts_collection_post", methods={"POST"})
      * @param Request $request
-     * @param SerializerInterface $serializer
-     * @param EntityManagerInterface $entityManager
-     * @param UrlGeneratorInterface $urlGenerator
      * @param int $userId
      * @return JsonResponse
      */
-    public function post(
-        Request $request,
-        SerializerInterface $serializer,
-        EntityManagerInterface $entityManager,
-        UrlGeneratorInterface $urlGenerator,
-        int $userId
-    ): JsonResponse {
-        $post = $serializer->deserialize($request->getContent(), Post::class, "json");
-
-        $author = $entityManager->getRepository(User::class)->find($userId);
+    public function post(Request $request, int $userId): JsonResponse {
+        $post = $this->serializer->deserialize($request->getContent(), Post::class, "json");
+        $author = $this->entityManager->getRepository(User::class)->find($userId);
         $post->setAuthor($author);
+        $this->entityManager->persist($post);
+        $this->entityManager->flush();
 
-        $entityManager->persist($post);
-        $entityManager->flush();
-
-        return new JsonResponse(
-            $serializer->serialize($post, "json"),
-            JsonResponse::HTTP_CREATED,
-            ["Location" => $urlGenerator->generate("api_posts_item_get", ["id" => $post->getId()])],
-            true
-        );
+        return $this->json($post, 201);
     }
 
     /**
      * @Route("/{id}", name="api_posts_item_put", methods={"PUT"})
      * @param Post $post
      * @param Request $request
-     * @param SerializerInterface $serializer
-     * @param EntityManagerInterface $entityManager
      * @return JsonResponse
      */
-    public function put(
-        Post $post,
-        Request $request,
-        SerializerInterface $serializer,
-        EntityManagerInterface $entityManager
-    ): JsonResponse {
-        $serializer->deserialize(
+    public function put(Post $post, Request $request): JsonResponse {
+        $this->serializer->deserialize(
             $request->getContent(),
             Post::class,
             "json",
             [AbstractNormalizer::OBJECT_TO_POPULATE => $post ]
         );
+        $this->entityManager->flush();
 
-        $entityManager->flush();
-
-        return new JsonResponse(
-            null,
-            JsonResponse::HTTP_NO_CONTENT,
-        );
+        return $this->json($post, 200);
     }
 
     /**
      * @Route("/{id}", name="api_posts_item_delete", methods={"DELETE"})
      * @param Post $post
-     * @param EntityManagerInterface $entityManager
      * @return JsonResponse
      */
-    public function delete(
-        Post $post,
-        EntityManagerInterface $entityManager
-    ): JsonResponse {
-        $entityManager->remove($post);
-        $entityManager->flush();
+    public function delete(Post $post): JsonResponse {
+        $this->entityManager->remove($post);
+        $this->entityManager->flush();
 
-        return new JsonResponse(
-            null,
-            JsonResponse::HTTP_NO_CONTENT,
-        );
+        return $this->json(204);
     }
 }
 
