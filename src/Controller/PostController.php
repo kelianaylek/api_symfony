@@ -55,26 +55,32 @@ class PostController
     }
 
     /**
-     * @Route(name="api_posts_collection_post", methods={"POST"})
+     * @Route("/{userId}", name="api_posts_collection_post", methods={"POST"})
      * @param Request $request
      * @param SerializerInterface $serializer
      * @param EntityManagerInterface $entityManager
      * @param UrlGeneratorInterface $urlGenerator
+     * @param int $userId
      * @return JsonResponse
      */
     public function post(
          Request $request,
          SerializerInterface $serializer,
          EntityManagerInterface $entityManager,
-         UrlGeneratorInterface $urlGenerator): JsonResponse
+         UrlGeneratorInterface $urlGenerator,
+         int $userId
+    ): JsonResponse
     {
         $post = $serializer->deserialize($request->getContent(), Post::class, "json");
-        $post->setAuthor($entityManager->getRepository(User::class)->findOneBy([]));
+
+        $author = $entityManager->getRepository(User::class)->find($userId);
+        $post->setAuthor($author);
+
         $entityManager->persist($post);
         $entityManager->flush();
 
         return new JsonResponse(
-            $serializer->serialize($post, "json", ["groups" => "get"]),
+            $serializer->serialize($post, "json"),
             JsonResponse::HTTP_CREATED,
             ["Location" => $urlGenerator->generate("api_posts_item_get", ["id" => $post->getId()])],
             true
