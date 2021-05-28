@@ -151,4 +151,3 @@ class Post
         $this->likedBy->removeElement($user);
     }
 }
-

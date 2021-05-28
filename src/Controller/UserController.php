@@ -29,7 +29,8 @@ class UserController extends AbstractController
     public function __construct(
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
-        SerializerInterface $serializer )
+        SerializerInterface $serializer
+    )
     {
         $this->entityManager = $entityManager ;
         $this->userRepository = $userRepository ;
@@ -61,8 +62,8 @@ class UserController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function post(Request $request): JsonResponse {
-
+    public function post(Request $request): JsonResponse
+    {
         $securityContext = $this->container->get('security.authorization_checker');
         if (!$securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
             $user = $this->serializer->deserialize($request->getContent(), User::class, "json");
@@ -70,7 +71,7 @@ class UserController extends AbstractController
             $this->entityManager->flush();
 
             return $this->json($user, 201);
-        }else{
+        } else {
             throw $this->createAccessDeniedException('Vous êtes déjà connecté !');
         }
     }
@@ -80,33 +81,49 @@ class UserController extends AbstractController
      * @param int $id
      * @return JsonResponse
      */
-    public function delete(int $id): JsonResponse {
-
+    public function delete(int $id): JsonResponse
+    {
         $userLoggedIn = $this->getUser();
         $userLoggedInId = $userLoggedIn->getId();
 
         if ($userLoggedInId === $id) {
             $posts = $this->entityManager->getRepository(Post::class)->findBy(['author' => $id]);
 
-            foreach($posts as $post){
+            foreach ($posts as $post) {
                 $commentsInPost = $this->entityManager->getRepository(Comment::class)->findBy(['author' => $id]);
-                foreach($commentsInPost as $commentInPost){
+                foreach ($commentsInPost as $commentInPost) {
                     $this->entityManager->remove($commentInPost);
                 }
                 $this->entityManager->remove($post);
             }
             $comments = $this->entityManager->getRepository(Comment::class)->findBy(['author' => $id]);
-            foreach($comments as $comment){
+            foreach ($comments as $comment) {
                 $this->entityManager->remove($comment);
             }
 
             $this->entityManager->remove($userLoggedIn);
             $this->entityManager->flush();
             return $this->json(204);
-        }else{
+        } else {
             throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce compte. !');
         }
+    }
 
+    /**
+     * @Route("/{id}", name="api_users_item_put", methods={"PUT"})
+     * @return JsonResponse
+     */
+    public function put(): JsonResponse
+    {
+        throw $this->createAccessDeniedException('Vous ne pouvez pas modifier ces informations !');
+    }
 
+    /**
+     * @Route("/{id}", name="api_users_item_patch", methods={"PATCH"})
+     * @return JsonResponse
+     */
+    public function patch(): JsonResponse
+    {
+        throw $this->createAccessDeniedException('Vous ne pouvez pas modifier ces informations !');
     }
 }

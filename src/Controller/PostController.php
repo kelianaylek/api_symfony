@@ -29,7 +29,8 @@ class PostController extends AbstractController
     public function __construct(
         EntityManagerInterface $entityManager,
         PostRepository $postRepository,
-        SerializerInterface $serializer )
+        SerializerInterface $serializer
+    )
     {
         $this->entityManager = $entityManager ;
         $this->postRepository = $postRepository ;
@@ -62,7 +63,8 @@ class PostController extends AbstractController
      * @param int $userId
      * @return JsonResponse
      */
-    public function post(Request $request, int $userId): JsonResponse {
+    public function post(Request $request, int $userId): JsonResponse
+    {
         $post = $this->serializer->deserialize($request->getContent(), Post::class, "json");
         $author = $this->entityManager->getRepository(User::class)->find($userId);
         $post->setAuthor($author);
@@ -78,7 +80,8 @@ class PostController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function put(Post $post, Request $request): JsonResponse {
+    public function put(Post $post, Request $request): JsonResponse
+    {
         $this->serializer->deserialize(
             $request->getContent(),
             Post::class,
@@ -95,11 +98,11 @@ class PostController extends AbstractController
      * @param Post $post
      * @return JsonResponse
      */
-    public function delete(Post $post): JsonResponse {
+    public function delete(Post $post): JsonResponse
+    {
         $this->entityManager->remove($post);
         $this->entityManager->flush();
 
         return $this->json(204);
     }
 }
-

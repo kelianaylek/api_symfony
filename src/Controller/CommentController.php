@@ -31,7 +31,8 @@ class CommentController extends AbstractController
         EntityManagerInterface $entityManager,
         UrlGeneratorInterface $urlGenerator,
         CommentRepository $commentRepository,
-        SerializerInterface $serializer )
+        SerializerInterface $serializer
+    )
     {
         $this->entityManager = $entityManager ;
         $this->commentRepository = $commentRepository ;
@@ -65,7 +66,8 @@ class CommentController extends AbstractController
      * @param int $postId
      * @return JsonResponse
      */
-    public function comment(Request $request, int $userId, int $postId): JsonResponse {
+    public function comment(Request $request, int $userId, int $postId): JsonResponse
+    {
         $comment = $this->serializer->deserialize($request->getContent(), Comment::class, "json");
 
         $author = $this->entityManager->getRepository(User::class)->find($userId);
@@ -76,7 +78,6 @@ class CommentController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json($comment, 201);
-
     }
 
     /**
@@ -85,7 +86,8 @@ class CommentController extends AbstractController
      * @param Comment $comment
      * @return JsonResponse
      */
-    public function put(Request $request, Comment $comment): JsonResponse {
+    public function put(Request $request, Comment $comment): JsonResponse
+    {
         $this->serializer->deserialize(
             $request->getContent(),
             Comment::class,
@@ -102,11 +104,11 @@ class CommentController extends AbstractController
      * @param Comment $comment
      * @return JsonResponse
      */
-    public function delete(Comment $comment): JsonResponse {
+    public function delete(Comment $comment): JsonResponse
+    {
         $this->entityManager->remove($comment);
         $this->entityManager->flush();
 
         return $this->json(204);
     }
 }
-

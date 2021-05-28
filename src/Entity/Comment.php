@@ -142,4 +142,3 @@ class Comment
         $this->post = $post;
     }
 }
-
