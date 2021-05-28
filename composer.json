@@ -28,7 +28,8 @@
         "symfony/yaml": "5.2.*"
     },
     "require-dev": {
-        "doctrine/doctrine-fixtures-bundle": "^3.4"
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
+        "phpstan/phpstan": "^0.12.88"
     },
     "config": {
         "optimize-autoloader": true,
