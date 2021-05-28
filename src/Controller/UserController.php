@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -62,11 +63,12 @@ class UserController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function post(Request $request): JsonResponse
+    public function post(Request $request, UserPasswordEncoderInterface $userPasswordEncoder): JsonResponse
     {
         $securityContext = $this->container->get('security.authorization_checker');
         if (!$securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
             $user = $this->serializer->deserialize($request->getContent(), User::class, "json");
+            $user->setPassword($userPasswordEncoder->encodePassword($user, $user->getPassword()));
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
