@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class Comment
@@ -16,18 +17,21 @@ class Comment
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
+     * @Groups({"get"})
      */
     private ?int $id;
 
     /**
      * @var string
      * @ORM\Column(type="text")
+     * @Groups({"get"})
      */
     private string $message;
 
     /**
      * @var \DateTimeInterface
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"get"})
      */
     private \DateTimeInterface $publishedAt;
 
@@ -35,6 +39,7 @@ class Comment
      * @var User
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"get"})
      */
     private User $author;
 
@@ -42,6 +47,7 @@ class Comment
      * @var Post
      * @ORM\ManyToOne(targetEntity="Post")
      * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"get"})
      */
     private Post $post;
 

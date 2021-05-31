@@ -14,9 +14,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
-/**
+    /**
  * @Route("/api/users")
  */
 class UserController extends AbstractController
@@ -46,7 +47,7 @@ class UserController extends AbstractController
     {
         $users = $this->userRepository->findAll();
 
-        return $this->json($users);
+        return $this->json($users, 200, [], ["groups" => "get"]);
     }
 
     /**
@@ -54,7 +55,7 @@ class UserController extends AbstractController
      */
     public function item(User $user): JsonResponse
     {
-        return $this->json($user);
+        return $this->json($user, 200, [], ["groups" => "get"]);
     }
 
     /**

@@ -46,7 +46,7 @@ class CommentController extends AbstractController
     public function collection(): JsonResponse
     {
         $comments = $this->commentRepository->findAll();
-        return $this->json($comments);
+        return $this->json($comments, 200, [], ["groups" => "get"]);
     }
 
     /**
@@ -56,7 +56,7 @@ class CommentController extends AbstractController
      */
     public function item(Comment $comment): JsonResponse
     {
-        return $this->json($comment);
+        return $this->json($comment, 200, [], ["groups" => "get"]);
     }
 
     /**

@@ -34,6 +34,7 @@ class Post
      * @var \DateTimeInterface
      * @ORM\Column(type="datetime_immutable")
      * @Groups({"get"})
+
      */
     private \DateTimeInterface $publishedAt;
 
@@ -41,6 +42,7 @@ class Post
      * @var User
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"get"})
      */
     private User $author;
 
@@ -48,6 +50,7 @@ class Post
      * @var User[]|Collection
      * @ORM\ManyToMany(targetEntity="User")
      * @ORM\JoinTable(name="post_likes")
+     * @Groups({"get"})
      */
     private Collection $likedBy;
 
