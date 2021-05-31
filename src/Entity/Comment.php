@@ -34,6 +34,7 @@ class Comment
     /**
      * @var User
      * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private User $author;
 

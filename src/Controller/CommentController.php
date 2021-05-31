@@ -32,7 +32,8 @@ class CommentController extends AbstractController
         UrlGeneratorInterface $urlGenerator,
         CommentRepository $commentRepository,
         SerializerInterface $serializer
-    ) {
+    )
+    {
         $this->entityManager = $entityManager ;
         $this->commentRepository = $commentRepository ;
         $this->serializer = $serializer ;

@@ -12,4 +12,7 @@
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
+
+.idea/api_symfony.iml
 .php-cs-fixer.cache
+
