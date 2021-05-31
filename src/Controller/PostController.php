@@ -40,11 +40,13 @@ class PostController extends AbstractController
     /**
      * @return JsonResponse
      * @Route(name="api_posts_collection_get", methods={"GET"})
+     *
      */
     public function collection(): JsonResponse
     {
         $posts = $this->postRepository->findAll();
-        return $this->json($posts);
+
+        return $this->json($posts, 200, [], ["groups" => "get"]);
     }
 
     /**
@@ -54,7 +56,7 @@ class PostController extends AbstractController
      */
     public function item(Post $post): JsonResponse
     {
-        return $this->json($post);
+        return $this->json($post, 200, [], ["groups" => "get"]);
     }
 
     /**

@@ -4,6 +4,13 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\EmailValidator;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
 
 /**
  * Class User
@@ -17,6 +24,7 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
+     * @Groups({"get"})
      */
     private ?int $id = null;
 
@@ -35,6 +43,7 @@ class User implements UserInterface
     /**
      * @var string
      * @ORM\Column
+     * @Groups({"get"})
      */
     private string $name;
 
