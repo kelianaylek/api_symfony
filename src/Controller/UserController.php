@@ -16,28 +16,32 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
     /**
  * @Route("/api/users")
  */
-class UserController extends AbstractController
+class UserController extends BaseController
 {
     private EntityManagerInterface $entityManager;
     private UserRepository $userRepository;
     private SerializerInterface $serializer;
     private UserPasswordEncoderInterface $userPasswordEncoder;
+    private ValidatorInterface $validator;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
         SerializerInterface $serializer,
-        UserPasswordEncoderInterface $userPasswordEncoder
+        UserPasswordEncoderInterface $userPasswordEncoder,
+        ValidatorInterface $validator
     )
     {
         $this->entityManager = $entityManager ;
         $this->userRepository = $userRepository ;
         $this->serializer = $serializer ;
         $this->userPasswordEncoder = $userPasswordEncoder;
+        $this->validator = $validator;
     }
 
     /**
@@ -63,11 +67,13 @@ class UserController extends AbstractController
      */
     public function post(Request $request): JsonResponse
     {
-        $securityContext = $this->container->get('security.authorization_checker');
-        if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException('Vous êtes déjà connecté !');
         }
         $user = $this->serializer->deserialize($request->getContent(), User::class, "json");
+        if ($response = $this->postValidation($user, $this->validator)) {
+            return $response;
+        }
         $user->setPassword($this->userPasswordEncoder->encodePassword($user, $user->getPassword()));
         $this->entityManager->persist($user);
         $this->entityManager->flush();

@@ -14,27 +14,31 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Class PostController
  * @package App\Controller
  * @Route("/api/posts")
  */
-class PostController extends AbstractController
+class PostController extends BaseController
 {
     private EntityManagerInterface $entityManager;
     private PostRepository $postRepository;
     private SerializerInterface $serializer;
+    private ValidatorInterface $validator;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         PostRepository $postRepository,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        ValidatorInterface $validator
     )
     {
         $this->entityManager = $entityManager ;
         $this->postRepository = $postRepository ;
         $this->serializer = $serializer ;
+        $this->validator = $validator;
     }
 
     /**
@@ -68,6 +72,9 @@ class PostController extends AbstractController
     public function post(Request $request, int $userId): JsonResponse
     {
         $post = $this->serializer->deserialize($request->getContent(), Post::class, "json");
+        if ($response = $this->postValidation($post, $this->validator)) {
+            return $response;
+        }
         $author = $this->entityManager->getRepository(User::class)->find($userId);
         $post->setAuthor($author);
         $this->entityManager->persist($post);
@@ -90,6 +97,9 @@ class PostController extends AbstractController
             "json",
             [AbstractNormalizer::OBJECT_TO_POPULATE => $post ]
         );
+        if ($response = $this->postValidation($post, $this->validator)) {
+            return $response;
+        }
         $this->entityManager->flush();
 
         return $this->json($post, 200);

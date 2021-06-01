@@ -15,28 +15,31 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Class CommentController
  * @package App\Controller
  * @Route("/api/comments")
  */
-class CommentController extends AbstractController
+class CommentController extends BaseController
 {
     private EntityManagerInterface $entityManager;
     private CommentRepository $commentRepository;
     private SerializerInterface $serializer;
+    private ValidatorInterface $validator;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        UrlGeneratorInterface $urlGenerator,
         CommentRepository $commentRepository,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        ValidatorInterface $validator
     )
     {
         $this->entityManager = $entityManager ;
         $this->commentRepository = $commentRepository ;
         $this->serializer = $serializer ;
+        $this->validator = $validator;
     }
 
     /**
@@ -69,7 +72,9 @@ class CommentController extends AbstractController
     public function comment(Request $request, int $userId, int $postId): JsonResponse
     {
         $comment = $this->serializer->deserialize($request->getContent(), Comment::class, "json");
-
+        if ($response = $this->postValidation($comment, $this->validator)) {
+            return $response;
+        }
         $author = $this->entityManager->getRepository(User::class)->find($userId);
         $comment->setAuthor($author);
         $post = $this->entityManager->getRepository(Post::class)->find($postId);
@@ -88,12 +93,15 @@ class CommentController extends AbstractController
      */
     public function put(Request $request, Comment $comment): JsonResponse
     {
-        $this->serializer->deserialize(
+        $comment = $this->serializer->deserialize(
             $request->getContent(),
             Comment::class,
             "json",
             [AbstractNormalizer::OBJECT_TO_POPULATE => $comment ]
         );
+        if ($response = $this->postValidation($comment, $this->validator)) {
+            return $response;
+        }
         $this->entityManager->flush();
 
         return $this->json($comment, 200);
