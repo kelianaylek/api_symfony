@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * @package App\Controller
  * @Route("/api/posts")
  */
-class PostController extends AbstractController
+class PostController extends BaseController
 {
     private EntityManagerInterface $entityManager;
     private PostRepository $postRepository;
@@ -72,18 +72,9 @@ class PostController extends AbstractController
     public function post(Request $request, int $userId): JsonResponse
     {
         $post = $this->serializer->deserialize($request->getContent(), Post::class, "json");
-
-        $errors = $this->validator->validate($post);
-        if (count($errors) > 0) {
-            $formattedErrors = [];
-            foreach ($errors as $error) {
-                $formattedErrors[$error->getPropertyPath()] = [
-                    'message' => sprintf('The property "%s" with value "%s" violated a requirement (%s)', $error->getPropertyPath(), $error->getInvalidValue(), $error->getMessage())
-                ];
-            }
-            return $this->json($formattedErrors, 400);
+        if ($response = $this->postValidation($post, $this->validator)) {
+            return $response;
         }
-
         $author = $this->entityManager->getRepository(User::class)->find($userId);
         $post->setAuthor($author);
         $this->entityManager->persist($post);

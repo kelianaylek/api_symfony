@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  * @package App\Controller
  * @Route("/api/comments")
  */
-class CommentController extends AbstractController
+class CommentController extends BaseController
 {
     private EntityManagerInterface $entityManager;
     private CommentRepository $commentRepository;
@@ -73,17 +73,9 @@ class CommentController extends AbstractController
     {
         $comment = $this->serializer->deserialize($request->getContent(), Comment::class, "json");
 
-        $errors = $this->validator->validate($comment);
-        if (count($errors) > 0) {
-            $formattedErrors = [];
-            foreach ($errors as $error) {
-                $formattedErrors[$error->getPropertyPath()] = [
-                    'message' => sprintf('The property "%s" with value "%s" violated a requirement (%s)', $error->getPropertyPath(), $error->getInvalidValue(), $error->getMessage())
-                ];
-            }
-            return $this->json($formattedErrors, 400);
+        if ($response = $this->postValidation($comment, $this->validator)) {
+            return $response;
         }
-
         $author = $this->entityManager->getRepository(User::class)->find($userId);
         $comment->setAuthor($author);
         $post = $this->entityManager->getRepository(Post::class)->find($postId);

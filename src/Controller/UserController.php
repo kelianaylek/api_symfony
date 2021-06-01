@@ -16,14 +16,12 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
-
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 
     /**
  * @Route("/api/users")
  */
-class UserController extends AbstractController
+class UserController extends BaseController
 {
     private EntityManagerInterface $entityManager;
     private UserRepository $userRepository;
@@ -74,19 +72,9 @@ class UserController extends AbstractController
             throw $this->createAccessDeniedException('Vous êtes déjà connecté !');
         }
         $user = $this->serializer->deserialize($request->getContent(), User::class, "json");
-
-        $errors = $this->validator->validate($user);
-        if (count($errors) > 0) {
-            $formattedErrors = [];
-            foreach ($errors as $error) {
-                $formattedErrors[$error->getPropertyPath()] = [
-                    'message' => sprintf('The property "%s" with value "%s" violated a requirement (%s)', $error->getPropertyPath(), $error->getInvalidValue(), $error->getMessage())
-                ];
-            }
-            return $this->json($formattedErrors, 400);
+        if ($response = $this->postValidation($user, $this->validator)) {
+            return $response;
         }
-
-        $user = $this->serializer->deserialize($request->getContent(), User::class, "json");
         $user->setPassword($this->userPasswordEncoder->encodePassword($user, $user->getPassword()));
         $this->entityManager->persist($user);
         $this->entityManager->flush();
