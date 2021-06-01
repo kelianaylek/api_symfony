@@ -117,4 +117,42 @@ class PostController extends BaseController
 
         return $this->json(204);
     }
+
+    /**
+     * @Route("/addLike/{id}/{userId}", name="api_posts_item_add_like", methods={"PUT"})
+     */
+    public function addLike($id, $userId): JsonResponse
+    {
+        $userLoggedIn = $this->getUser();
+        $userLoggedInId = $userLoggedIn->getId();
+        if ($userLoggedInId !== $id) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas liker ce post avec ce compte.');
+        }
+        $post = $this->entityManager->getRepository(Post::class)->find($id);
+        $user = $this->entityManager->getRepository(User::class)->find($userId);
+        $post->likeBy($user);
+        $this->entityManager->persist($post);
+        $this->entityManager->flush();
+
+        return $this->json($post, 201);
+    }
+
+    /**
+     * @Route("/removeLike/{id}/{userId}", name="api_posts_item_remove_like", methods={"PUT"})
+     */
+    public function removeLike($id, $userId): JsonResponse
+    {
+        $userLoggedIn = $this->getUser();
+        $userLoggedInId = $userLoggedIn->getId();
+        if ($userLoggedInId !== $id) {
+            throw $this->createAccessDeniedException('Vous ne pouvez pas liker ce post avec ce compte.');
+        }
+        $post = $this->entityManager->getRepository(Post::class)->find($id);
+        $user = $this->entityManager->getRepository(User::class)->find($userId);
+        $post->dislikeBy($user);
+        $this->entityManager->persist($post);
+        $this->entityManager->flush();
+
+        return $this->json($post, 201);
+    }
 }
