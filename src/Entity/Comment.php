@@ -4,6 +4,9 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
  * Class Comment
@@ -25,6 +28,12 @@ class Comment
      * @var string
      * @ORM\Column(type="text")
      * @Groups({"get"})
+     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Assert\Length(
+     *      max = 800,
+     *      maxMessage = "Your message cannot be longer than {{ limit }} characters"
+     * )
      */
     private string $message;
 

@@ -6,12 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-
 use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\EmailValidator;
 use Symfony\Component\Validator\Constraints\NotBlank;
-
-
+use Symfony\Component\Validator\Constraints\NotNull;
 /**
  * Class User
  * @package App\Entity
@@ -31,12 +28,23 @@ class User implements UserInterface
     /**
      * @var string
      * @ORM\Column(unique=true)
+     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Assert\Email(
+     *     message = "The email '{{ value }}' is not a valid email."
+     * )
      */
     private string $email;
 
     /**
      * @var string
      * @ORM\Column
+     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Assert\Length(
+     *      min = 6,
+     *      minMessage = "Your password must be at least {{ limit }} characters long",
+     * )
      */
     private string $password;
 
@@ -44,6 +52,14 @@ class User implements UserInterface
      * @var string
      * @ORM\Column
      * @Groups({"get"})
+     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 30,
+     *      minMessage = "Your name must be at least {{ limit }} characters long",
+     *      maxMessage = "Your name cannot be longer than {{ limit }} characters"
+     * )
      */
     private string $name;
 

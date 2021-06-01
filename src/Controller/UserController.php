@@ -17,6 +17,9 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+
     /**
  * @Route("/api/users")
  */
@@ -61,12 +64,25 @@ class UserController extends AbstractController
     /**
      * @Route(name="api_users_collection_post", methods={"POST"})
      */
-    public function post(Request $request): JsonResponse
+    public function post(Request $request, ValidatorInterface $validator): JsonResponse
     {
         $securityContext = $this->container->get('security.authorization_checker');
         if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException('Vous êtes déjà connecté !');
         }
+        $user = $this->serializer->deserialize($request->getContent(), User::class, "json");
+
+        $errors = $validator->validate($user);
+        if (count($errors) > 0) {
+            $formattedErrors = [];
+            foreach ($errors as $error) {
+                $formattedErrors[$error->getPropertyPath()] = [
+                    'message' => sprintf('The property "%s" with value "%s" violated a requirement (%s)', $error->getPropertyPath(), $error->getInvalidValue(), $error->getMessage())
+                ];
+            }
+            return $this->json($formattedErrors, 400);
+        }
+
         $user = $this->serializer->deserialize($request->getContent(), User::class, "json");
         $user->setPassword($this->userPasswordEncoder->encodePassword($user, $user->getPassword()));
         $this->entityManager->persist($user);

@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Class CommentController
@@ -66,9 +67,20 @@ class CommentController extends AbstractController
      * @param int $postId
      * @return JsonResponse
      */
-    public function comment(Request $request, int $userId, int $postId): JsonResponse
+    public function comment(Request $request, int $userId, int $postId, ValidatorInterface $validator): JsonResponse
     {
         $comment = $this->serializer->deserialize($request->getContent(), Comment::class, "json");
+
+        $errors = $validator->validate($comment);
+        if (count($errors) > 0) {
+            $formattedErrors = [];
+            foreach ($errors as $error) {
+                $formattedErrors[$error->getPropertyPath()] = [
+                    'message' => sprintf('The property "%s" with value "%s" violated a requirement (%s)', $error->getPropertyPath(), $error->getInvalidValue(), $error->getMessage())
+                ];
+            }
+            return $this->json($formattedErrors, 400);
+        }
 
         $author = $this->entityManager->getRepository(User::class)->find($userId);
         $comment->setAuthor($author);
