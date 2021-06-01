@@ -97,6 +97,9 @@ class PostController extends BaseController
             "json",
             [AbstractNormalizer::OBJECT_TO_POPULATE => $post ]
         );
+        if ($response = $this->postValidation($post, $this->validator)) {
+            return $response;
+        }
         $this->entityManager->flush();
 
         return $this->json($post, 200);

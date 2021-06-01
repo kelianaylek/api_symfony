@@ -72,7 +72,6 @@ class CommentController extends BaseController
     public function comment(Request $request, int $userId, int $postId): JsonResponse
     {
         $comment = $this->serializer->deserialize($request->getContent(), Comment::class, "json");
-
         if ($response = $this->postValidation($comment, $this->validator)) {
             return $response;
         }
@@ -94,12 +93,15 @@ class CommentController extends BaseController
      */
     public function put(Request $request, Comment $comment): JsonResponse
     {
-        $this->serializer->deserialize(
+        $comment = $this->serializer->deserialize(
             $request->getContent(),
             Comment::class,
             "json",
             [AbstractNormalizer::OBJECT_TO_POPULATE => $comment ]
         );
+        if ($response = $this->postValidation($comment, $this->validator)) {
+            return $response;
+        }
         $this->entityManager->flush();
 
         return $this->json($comment, 200);

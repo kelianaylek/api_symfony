@@ -67,8 +67,7 @@ class UserController extends BaseController
      */
     public function post(Request $request): JsonResponse
     {
-        $securityContext = $this->container->get('security.authorization_checker');
-        if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
+        if ($this->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException('Vous êtes déjà connecté !');
         }
         $user = $this->serializer->deserialize($request->getContent(), User::class, "json");
