@@ -27,17 +27,19 @@ class CommentController extends AbstractController
     private EntityManagerInterface $entityManager;
     private CommentRepository $commentRepository;
     private SerializerInterface $serializer;
+    private ValidatorInterface $validator;
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        UrlGeneratorInterface $urlGenerator,
         CommentRepository $commentRepository,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        ValidatorInterface $validator
     )
     {
         $this->entityManager = $entityManager ;
         $this->commentRepository = $commentRepository ;
         $this->serializer = $serializer ;
+        $this->validator = $validator;
     }
 
     /**
@@ -67,11 +69,11 @@ class CommentController extends AbstractController
      * @param int $postId
      * @return JsonResponse
      */
-    public function comment(Request $request, int $userId, int $postId, ValidatorInterface $validator): JsonResponse
+    public function comment(Request $request, int $userId, int $postId): JsonResponse
     {
         $comment = $this->serializer->deserialize($request->getContent(), Comment::class, "json");
 
-        $errors = $validator->validate($comment);
+        $errors = $this->validator->validate($comment);
         if (count($errors) > 0) {
             $formattedErrors = [];
             foreach ($errors as $error) {

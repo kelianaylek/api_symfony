@@ -26,16 +26,19 @@ class PostController extends AbstractController
     private EntityManagerInterface $entityManager;
     private PostRepository $postRepository;
     private SerializerInterface $serializer;
+    private ValidatorInterface $validator;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         PostRepository $postRepository,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        ValidatorInterface $validator
     )
     {
         $this->entityManager = $entityManager ;
         $this->postRepository = $postRepository ;
         $this->serializer = $serializer ;
+        $this->validator = $validator;
     }
 
     /**
@@ -66,11 +69,11 @@ class PostController extends AbstractController
      * @param int $userId
      * @return JsonResponse
      */
-    public function post(Request $request, int $userId, ValidatorInterface $validator): JsonResponse
+    public function post(Request $request, int $userId): JsonResponse
     {
         $post = $this->serializer->deserialize($request->getContent(), Post::class, "json");
 
-        $errors = $validator->validate($post);
+        $errors = $this->validator->validate($post);
         if (count($errors) > 0) {
             $formattedErrors = [];
             foreach ($errors as $error) {

@@ -29,18 +29,21 @@ class UserController extends AbstractController
     private UserRepository $userRepository;
     private SerializerInterface $serializer;
     private UserPasswordEncoderInterface $userPasswordEncoder;
+    private ValidatorInterface $validator;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
         SerializerInterface $serializer,
-        UserPasswordEncoderInterface $userPasswordEncoder
+        UserPasswordEncoderInterface $userPasswordEncoder,
+        ValidatorInterface $validator
     )
     {
         $this->entityManager = $entityManager ;
         $this->userRepository = $userRepository ;
         $this->serializer = $serializer ;
         $this->userPasswordEncoder = $userPasswordEncoder;
+        $this->validator = $validator;
     }
 
     /**
@@ -64,7 +67,7 @@ class UserController extends AbstractController
     /**
      * @Route(name="api_users_collection_post", methods={"POST"})
      */
-    public function post(Request $request, ValidatorInterface $validator): JsonResponse
+    public function post(Request $request): JsonResponse
     {
         $securityContext = $this->container->get('security.authorization_checker');
         if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -72,7 +75,7 @@ class UserController extends AbstractController
         }
         $user = $this->serializer->deserialize($request->getContent(), User::class, "json");
 
-        $errors = $validator->validate($user);
+        $errors = $this->validator->validate($user);
         if (count($errors) > 0) {
             $formattedErrors = [];
             foreach ($errors as $error) {
