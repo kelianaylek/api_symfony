@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
  * Class User
  * @package App\Entity
  * @ORM\Entity
+ * @ORM\Table(name="app_user")
  */
 class User implements UserInterface
 {
