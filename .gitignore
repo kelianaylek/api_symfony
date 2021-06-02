@@ -13,7 +13,7 @@
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
 
-.idea/api_symfony.iml
+.idea
 .php-cs-fixer.cache
 
 
@@ -27,3 +27,4 @@
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
