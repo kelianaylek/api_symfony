@@ -57,6 +57,6 @@ final class Version20210602152444 extends AbstractMigration
         $this->addSql('DROP TABLE comment');
         $this->addSql('DROP TABLE post');
         $this->addSql('DROP TABLE post_likes');
-        $this->addSql('DROP TABLE "user"');
+        $this->addSql('DROP TABLE "app_user"');
     }
 }
