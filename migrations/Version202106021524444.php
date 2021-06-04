@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210602152444 extends AbstractMigration
+final class Version202106021524444 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -22,7 +22,7 @@ final class Version20210602152444 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SEQUENCE comment_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE post_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE user_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE app_user_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE comment (id INT NOT NULL, author_id INT DEFAULT NULL, post_id INT DEFAULT NULL, message TEXT NOT NULL, published_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_9474526CF675F31B ON comment (author_id)');
         $this->addSql('CREATE INDEX IDX_9474526C4B89032C ON comment (post_id)');
@@ -53,7 +53,7 @@ final class Version20210602152444 extends AbstractMigration
         $this->addSql('ALTER TABLE post_likes DROP CONSTRAINT FK_DED1C292A76ED395');
         $this->addSql('DROP SEQUENCE comment_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE post_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE user_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE app_user_id_seq CASCADE');
         $this->addSql('DROP TABLE comment');
         $this->addSql('DROP TABLE post');
         $this->addSql('DROP TABLE post_likes');
