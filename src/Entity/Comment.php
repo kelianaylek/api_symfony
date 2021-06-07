@@ -53,13 +53,9 @@ class Comment
     private User $author;
 
     /**
-     * @var Post
-     * @ORM\ManyToOne(targetEntity="Post")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"get"})
+     * @ORM\ManyToOne(targetEntity=Post::class, inversedBy="comments")
      */
     private Post $post;
-
 
     /**
      * @param string $message
