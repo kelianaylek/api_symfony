@@ -22,14 +22,14 @@ class Post
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
-     * @Groups({"get"})
+     * @Groups({"post"})
      */
     private ?int $id = null;
 
     /**
      * @var string
      * @ORM\Column(type="text")
-     * @Groups({"get"})
+     * @Groups({"post"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Length(
@@ -42,7 +42,7 @@ class Post
     /**
      * @var \DateTimeInterface
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"get"})
+     * @Groups({"post"})
 
      */
     private \DateTimeInterface $publishedAt;
@@ -51,7 +51,7 @@ class Post
      * @var User
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"get"})
+     * @Groups({"post"})
      */
     private User $author;
 
@@ -59,20 +59,20 @@ class Post
      * @var User[]|Collection
      * @ORM\ManyToMany(targetEntity="User")
      * @ORM\JoinTable(name="post_likes")
-     * @Groups({"get"})
+     * @Groups({"user"})
      */
     private Collection $likedBy;
 
     /**
      * @var Comment[]|Collection
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="post")
-     * @Groups({"get"})
+     * @Groups({"comment"})
      */
     private Collection $comments;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"get"})
+     * @Groups({"post"})
      */
     private ?string $image;
 

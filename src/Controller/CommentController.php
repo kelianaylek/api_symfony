@@ -49,7 +49,7 @@ class CommentController extends BaseController
     public function collection(): JsonResponse
     {
         $comments = $this->commentRepository->findAll();
-        return $this->json($comments, 200, [], ["groups" => "get"]);
+        return $this->json($comments, 200, [], ["groups" => ["comment", "user"] ]);
     }
 
     /**
@@ -59,7 +59,7 @@ class CommentController extends BaseController
      */
     public function item(Comment $comment): JsonResponse
     {
-        return $this->json($comment, 200, [], ["groups" => "get"]);
+        return $this->json($comment, 200, [], ["groups" => ["comment", "user"]]);
     }
 
     /**
@@ -82,7 +82,8 @@ class CommentController extends BaseController
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
 
-        return $this->json($comment, 201);
+        return $this->json($comment, 200, [], ["groups" => ["comment", "user"]]);
+
     }
 
     /**
@@ -104,7 +105,7 @@ class CommentController extends BaseController
         }
         $this->entityManager->flush();
 
-        return $this->json($comment, 200);
+        return $this->json($comment, 200, [], ["groups" => ["comment", "user"]]);
     }
 
     /**

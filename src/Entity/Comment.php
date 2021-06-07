@@ -20,14 +20,14 @@ class Comment
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
-     * @Groups({"get"})
+     * @Groups({"comment"})
      */
     private ?int $id;
 
     /**
      * @var string
      * @ORM\Column(type="text")
-     * @Groups({"get"})
+     * @Groups({"comment"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Length(
@@ -40,7 +40,7 @@ class Comment
     /**
      * @var \DateTimeInterface
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"get"})
+     * @Groups({"comment"})
      */
     private \DateTimeInterface $publishedAt;
 
@@ -48,7 +48,7 @@ class Comment
      * @var User
      * @ORM\ManyToOne(targetEntity="User")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"get"})
+     * @Groups({"user"})
      */
     private User $author;
 
@@ -59,7 +59,7 @@ class Comment
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"get"})
+     * @Groups({"comment"})
      */
     private ?string $image;
 
