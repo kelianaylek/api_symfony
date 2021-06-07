@@ -58,17 +58,23 @@ class Comment
     private Post $post;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $image;
+
+    /**
      * @param string $message
      * @param User $author
      * @param Post $post
      * @return static
      */
-    public static function create(string $message, User $author, Post $post): self
+    public static function create(string $message, User $author, Post $post, $image): self
     {
         $comment = new self();
         $comment->message = $message;
         $comment->author = $author;
         $comment->post = $post;
+        $comment->image = $image;
 
 
         return $comment;
@@ -152,5 +158,17 @@ class Comment
     public function setPost(Post $post): void
     {
         $this->post = $post;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
     }
 }
