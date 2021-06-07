@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210606091014 extends AbstractMigration
+final class Version20210606091013 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -28,7 +28,6 @@ final class Version20210606091014 extends AbstractMigration
         $this->addSql('DROP TABLE comment');
         $this->addSql('DROP TABLE post');
         $this->addSql('DROP TABLE post_likes');
-
     }
 
     public function down(Schema $schema): void
