@@ -54,12 +54,12 @@ class Comment
 
     /**
      * @ORM\ManyToOne(targetEntity=Post::class, inversedBy="comments")
-     * @Groups({"get"})
      */
     private Post $post;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"get"})
      */
     private ?string $image;
 
@@ -67,9 +67,10 @@ class Comment
      * @param string $message
      * @param User $author
      * @param Post $post
+     * @param string $image
      * @return static
      */
-    public static function create(string $message, User $author, Post $post, $image): self
+    public static function create(string $message, User $author, Post $post, string $image): self
     {
         $comment = new self();
         $comment->message = $message;

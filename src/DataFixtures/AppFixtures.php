@@ -55,7 +55,11 @@ class AppFixtures extends Fixture
                 for ($k = 1; $k <= 10; $k++) {
                     $comment = Comment::create(sprintf("Message %d", $k), $users[array_rand($users)], $post, "comment_image_url");
 
+                    $post->addComment($comment);
+
                     $manager->persist($comment);
+                    $manager->persist($post);
+
                 }
             }
         }
