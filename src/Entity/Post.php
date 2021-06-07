@@ -71,15 +71,23 @@ class Post
     private Collection $comments;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"get"})
+     */
+    private ?string $image;
+
+    /**
      * @param string $content
      * @param User $author
+     * @param string $image
      * @return static
      */
-    public static function create(string $content, User $author): self
+    public static function create(string $content, User $author, string $image): self
     {
         $post = new self();
         $post->content = $content;
         $post->author = $author;
+        $post->image = $image;
 
         return $post;
     }
@@ -198,6 +206,18 @@ class Post
                 $comment->setPost(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
 
         return $this;
     }

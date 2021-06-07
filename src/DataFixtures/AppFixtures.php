@@ -45,7 +45,7 @@ class AppFixtures extends Fixture
 
         foreach ($users as $user) {
             for ($j = 1; $j <= 5; $j++) {
-                $post = Post::create("Content", $user);
+                $post = Post::create("Content", $user, "image_url");
                 shuffle($users);
                 foreach (array_slice($users, 0, 5) as $userCanLike) {
                     $post->likeBy($userCanLike);
