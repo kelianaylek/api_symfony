@@ -24,10 +24,10 @@ final class Version20210606091013 extends AbstractMigration
         $this->addSql('ALTER TABLE post_likes DROP CONSTRAINT FK_DED1C292A76ED395');
         $this->addSql('ALTER TABLE comment DROP CONSTRAINT FK_9474526C4B89032C');
         $this->addSql('ALTER TABLE post_likes DROP CONSTRAINT FK_DED1C2924B89032C');
-        $this->addSql('DROP TABLE app_user');
         $this->addSql('DROP TABLE comment');
-        $this->addSql('DROP TABLE post');
         $this->addSql('DROP TABLE post_likes');
+        $this->addSql('DROP TABLE post');
+        $this->addSql('DROP TABLE app_user');
     }
 
     public function down(Schema $schema): void
