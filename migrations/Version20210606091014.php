@@ -28,6 +28,7 @@ final class Version20210606091014 extends AbstractMigration
         $this->addSql('DROP TABLE comment');
         $this->addSql('DROP TABLE post');
         $this->addSql('DROP TABLE post_likes');
+
     }
 
     public function down(Schema $schema): void
