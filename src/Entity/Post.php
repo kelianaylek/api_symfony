@@ -48,10 +48,11 @@ class Post
     private \DateTimeInterface $publishedAt;
 
     /**
-     * @var User
-     * @ORM\ManyToOne(targetEntity="User")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="posts")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"post"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"post_author"})
+
      */
     private User $author;
 
@@ -59,7 +60,7 @@ class Post
      * @var User[]|Collection
      * @ORM\ManyToMany(targetEntity="User")
      * @ORM\JoinTable(name="post_likes")
-     * @Groups({"user"})
+     * @Groups({"likers"})
      */
     private Collection $likedBy;
 
@@ -141,22 +142,6 @@ class Post
     }
 
     /**
-     * @return User
-     */
-    public function getAuthor(): User
-    {
-        return $this->author;
-    }
-
-    /**
-     * @param User $author
-     */
-    public function setAuthor(User $author): void
-    {
-        $this->author = $author;
-    }
-
-    /**
      * @return User[]|Collection
      */
     public function getLikedBy(): Collection
@@ -218,6 +203,18 @@ class Post
     public function setImage(?string $image): self
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(User $author): self
+    {
+        $this->author = $author;
 
         return $this;
     }

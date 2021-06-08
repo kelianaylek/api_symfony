@@ -50,7 +50,7 @@ class PostController extends BaseController
     {
         $posts = $this->postRepository->findAll();
 
-        return $this->json($posts, 200, [], ["groups" => ["post", "user", "comment"]]);
+        return $this->json($posts, 200, [], ["groups" => ["post", "user", "comment", "likers"]]);
     }
 
     /**
@@ -60,7 +60,7 @@ class PostController extends BaseController
      */
     public function item(Post $post): JsonResponse
     {
-        return $this->json($post, 200, [], ["groups" => ["post", "user", "comment"]]);
+        return $this->json($post, 200, [], ["groups" => ["post", "user", "comment","likers"]]);
     }
 
     /**
@@ -80,7 +80,7 @@ class PostController extends BaseController
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
-        return $this->json($post, 201);
+        return $this->json($post, 201, [], ["groups" => ["post", "user", "comment","likers"]]);
     }
 
     /**
@@ -102,7 +102,7 @@ class PostController extends BaseController
         }
         $this->entityManager->flush();
 
-        return $this->json($post, 200);
+        return $this->json($post, 200, [], ["groups" => ["post", "user", "comment","likers"]]);
     }
 
     /**
@@ -134,7 +134,7 @@ class PostController extends BaseController
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
-        return $this->json($post, 201);
+        return $this->json($post, 201, [], ["groups" => ["post", "user", "comment","likers"]]);
     }
 
     /**
@@ -153,6 +153,6 @@ class PostController extends BaseController
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
-        return $this->json($post, 201);
+        return $this->json($post, 201, [], ["groups" => ["post", "user", "comment","likers"]]);
     }
 }
