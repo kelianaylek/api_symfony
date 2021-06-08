@@ -78,6 +78,12 @@ class Post
     private ?string $image;
 
     /**
+     * @ORM\OneToOne(targetEntity=Poll::class, mappedBy="post", cascade={"persist", "remove"})
+     * @Groups({"poll"})
+     */
+    private ?Poll $poll;
+
+    /**
      * @param string $content
      * @param User $author
      * @param string $image
@@ -215,6 +221,23 @@ class Post
     public function setAuthor(User $author): self
     {
         $this->author = $author;
+
+        return $this;
+    }
+
+    public function getPoll(): ?Poll
+    {
+        return $this->poll;
+    }
+
+    public function setPoll(Poll $poll): self
+    {
+        // set the owning side of the relation if necessary
+        if ($poll->getPost() !== $this) {
+            $poll->setPost($this);
+        }
+
+        $this->poll = $poll;
 
         return $this;
     }

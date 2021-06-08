@@ -73,9 +73,15 @@ class User implements UserInterface
      */
     private Collection $posts;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Poll::class, mappedBy="users")
+     */
+    private $polls;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
+        $this->polls = new ArrayCollection();
     }
 
     /**
@@ -197,6 +203,33 @@ class User implements UserInterface
             if ($post->getPostAuthor() === $this) {
                 $post->setPostAuthor(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Poll[]
+     */
+    public function getPolls(): Collection
+    {
+        return $this->polls;
+    }
+
+    public function addPoll(Poll $poll): self
+    {
+        if (!$this->polls->contains($poll)) {
+            $this->polls[] = $poll;
+            $poll->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePoll(Poll $poll): self
+    {
+        if ($this->polls->removeElement($poll)) {
+            $poll->removeUser($this);
         }
 
         return $this;

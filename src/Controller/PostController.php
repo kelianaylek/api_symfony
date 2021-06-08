@@ -50,7 +50,7 @@ class PostController extends BaseController
     {
         $posts = $this->postRepository->findAll();
 
-        return $this->json($posts, 200, [], ["groups" => ["post", "user", "comment", "likers"]]);
+        return $this->json($posts, 200, [], ["groups" => ["post", "user", "comment", "likers", "poll", "poll_choices"]]);
     }
 
     /**
@@ -60,7 +60,7 @@ class PostController extends BaseController
      */
     public function item(Post $post): JsonResponse
     {
-        return $this->json($post, 200, [], ["groups" => ["post", "user", "comment","likers"]]);
+        return $this->json($post, 200, [], ["groups" => ["post", "user", "comment","likers", "poll", "poll_choices"]]);
     }
 
     /**
