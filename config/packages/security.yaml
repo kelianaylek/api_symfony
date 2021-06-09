@@ -36,3 +36,5 @@ security:
     access_control:
          #- { path: ^/api/comments, roles: IS_AUTHENTICATED_FULLY, methods: [POST, DELETE, PUT, PATCH] }
          #- { path: ^/api/posts, roles: IS_AUTHENTICATED_FULLY, methods: [POST, DELETE, PUT, PATCH] }
+        - { path: ^/api/polls, roles: IS_AUTHENTICATED_FULLY, methods: [POST, DELETE, PUT, PATCH] }
+

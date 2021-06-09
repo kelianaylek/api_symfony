@@ -158,7 +158,6 @@ class PollController extends BaseController
         return $this->json($poll, 200, [], ["groups" => ["post", "user", "poll", "poll_post", "poll_users", "poll_choices"]]);
     }
 
-
     /**
      * @Route("/{pollId}", name="api_polls_item_delete", methods={"DELETE"})
      * @param $pollId
@@ -185,6 +184,22 @@ class PollController extends BaseController
 
     }
 
+    /**
+     * @Route("/addVote/{pollChoice}", name="api_polls_item_add_poll_choice", methods={"PUT"})
+     * @param $pollChoice
+     * @return JsonResponse
+     */
+    public function addVoteToPollChoice($pollChoice): JsonResponse
+    {
+        $userLoggedIn = $this->getUser();
+        var_dump($userLoggedIn);
+        $pollChoice = $this->entityManager->getRepository(PollChoice::class)->find($pollChoice);
+        $pollChoice->addUser($userLoggedIn);
+        $this->entityManager->persist($pollChoice);
+        $this->entityManager->flush();
 
+        return $this->json($pollChoice, 200, [], ["groups" => ["post", "user", "poll", "poll_post", "poll_users", "poll_choices"]]);
+
+    }
 
 }
