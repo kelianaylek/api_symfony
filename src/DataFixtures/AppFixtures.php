@@ -73,16 +73,16 @@ class AppFixtures extends Fixture
                         $pollChoice = new PollChoice;
                         $pollChoice->setTitle("Title " . $k);
                         $pollChoice->setPoll($poll);
-                        $pollChoice->setAnswersCount(rand(1, 20));
                         $poll->addPollChoice($pollChoice);
+                        shuffle($users);
+                        foreach (array_slice($users, 0, 5) as $userAnswersPoll) {
+                            $pollChoice->addUser($userAnswersPoll);
+                        }
 
                         $manager->persist($pollChoice);
 
                     }
-                    shuffle($users);
-                    foreach (array_slice($users, 0, 5) as $userAnswersPoll) {
-                        $poll->addUser($userAnswersPoll);
-                    }
+
                     $manager->persist($post);
                     $manager->persist($poll);
 

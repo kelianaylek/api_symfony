@@ -24,16 +24,12 @@ class Poll
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity=Post::class, inversedBy="poll", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Post::class, inversedBy="poll")
      * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @Groups({"poll_post"})
      */
     private ?Post $post;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="polls")
-     * @Groups({"poll"})
-     */
-    private Collection $users;
 
     /**
      * @ORM\OneToMany(targetEntity=PollChoice::class, mappedBy="poll", orphanRemoval=true)
@@ -43,7 +39,6 @@ class Poll
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
         $this->pollChoices = new ArrayCollection();
     }
 
@@ -60,30 +55,6 @@ class Poll
     public function setPost(Post $post): self
     {
         $this->post = $post;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|User[]
-     */
-    public function getUsers(): Collection
-    {
-        return $this->users;
-    }
-
-    public function addUser(User $user): self
-    {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        $this->users->removeElement($user);
 
         return $this;
     }

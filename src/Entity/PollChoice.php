@@ -3,9 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\PollChoiceRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
  * @ORM\Entity(repositoryClass=PollChoiceRepository::class)
@@ -23,20 +27,28 @@ class PollChoice
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"poll_choices"})
+     * @Assert\NotBlank
+     * @Assert\NotNull
      */
     private ?string $title;
 
     /**
-     * @ORM\Column(type="integer")
-     * @Groups({"poll_choices"})
-     */
-    private ?int $answersCount;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Poll::class, inversedBy="pollChoices")
      * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private ?Poll $poll;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="pollChoices")
+     * @Groups({"poll_users"})
+     */
+    private Collection $users;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -55,18 +67,6 @@ class PollChoice
         return $this;
     }
 
-    public function getAnswersCount(): ?int
-    {
-        return $this->answersCount;
-    }
-
-    public function setAnswersCount(int $answersCount): self
-    {
-        $this->answersCount = $answersCount;
-
-        return $this;
-    }
-
     public function getPoll(): ?Poll
     {
         return $this->poll;
@@ -75,6 +75,30 @@ class PollChoice
     public function setPoll(?Poll $poll): self
     {
         $this->poll = $poll;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        $this->users->removeElement($user);
 
         return $this;
     }

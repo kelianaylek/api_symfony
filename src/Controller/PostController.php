@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -50,7 +51,7 @@ class PostController extends BaseController
     {
         $posts = $this->postRepository->findAll();
 
-        return $this->json($posts, 200, [], ["groups" => ["post", "user", "comment", "likers", "poll", "poll_choices"]]);
+        return $this->json($posts, 200, [], ["groups" => ["post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices"]]);
     }
 
     /**
@@ -60,7 +61,7 @@ class PostController extends BaseController
      */
     public function item(Post $post): JsonResponse
     {
-        return $this->json($post, 200, [], ["groups" => ["post", "user", "comment","likers", "poll", "poll_choices"]]);
+        return $this->json($post, 200, [], ["groups" => ["post", "user", "comment","likers", "poll", "poll_posts", "poll_choices"]]);
     }
 
     /**
@@ -115,7 +116,7 @@ class PostController extends BaseController
         $this->entityManager->remove($post);
         $this->entityManager->flush();
 
-        return $this->json(204);
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**

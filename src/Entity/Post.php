@@ -22,7 +22,7 @@ class Post
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
-     * @Groups({"post"})
+     * @Groups({"post", "poll_post"})
      */
     private ?int $id = null;
 
@@ -66,7 +66,7 @@ class Post
 
     /**
      * @var Comment[]|Collection
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="post")
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="post", cascade={"persist", "remove"})
      * @Groups({"comment"})
      */
     private Collection $comments;
@@ -78,8 +78,8 @@ class Post
     private ?string $image;
 
     /**
-     * @ORM\OneToOne(targetEntity=Poll::class, mappedBy="post", cascade={"persist", "remove"})
-     * @Groups({"poll"})
+     * @ORM\OneToOne(targetEntity=Poll::class, mappedBy="post", orphanRemoval=true)
+     * @Groups({"poll_posts"})
      */
     private ?Poll $poll;
 

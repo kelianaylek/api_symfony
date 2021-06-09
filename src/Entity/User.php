@@ -24,7 +24,7 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
-     * @Groups({"user"})
+     * @Groups({"user", "poll_users"})
      */
     private ?int $id = null;
 
@@ -76,12 +76,18 @@ class User implements UserInterface
     /**
      * @ORM\ManyToMany(targetEntity=Poll::class, mappedBy="users")
      */
-    private $polls;
+    private Collection $polls;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=PollChoice::class, mappedBy="users")
+     */
+    private Collection $pollChoices;
 
     public function __construct()
     {
         $this->posts = new ArrayCollection();
         $this->polls = new ArrayCollection();
+        $this->pollChoices = new ArrayCollection();
     }
 
     /**
@@ -190,7 +196,7 @@ class User implements UserInterface
     {
         if (!$this->posts->contains($post)) {
             $this->posts[] = $post;
-            $post->setPostAuthor($this);
+            $post->setAuthor($this);
         }
 
         return $this;
@@ -200,8 +206,8 @@ class User implements UserInterface
     {
         if ($this->posts->removeElement($post)) {
             // set the owning side to null (unless already changed)
-            if ($post->getPostAuthor() === $this) {
-                $post->setPostAuthor(null);
+            if ($post->getAuthor() === $this) {
+                $post->setAuthor(null);
             }
         }
 
@@ -216,20 +222,28 @@ class User implements UserInterface
         return $this->polls;
     }
 
-    public function addPoll(Poll $poll): self
+    /**
+     * @return Collection|PollChoice[]
+     */
+    public function getPollChoices(): Collection
     {
-        if (!$this->polls->contains($poll)) {
-            $this->polls[] = $poll;
-            $poll->addUser($this);
+        return $this->pollChoices;
+    }
+
+    public function addPollChoice(PollChoice $pollChoice): self
+    {
+        if (!$this->pollChoices->contains($pollChoice)) {
+            $this->pollChoices[] = $pollChoice;
+            $pollChoice->addUser($this);
         }
 
         return $this;
     }
 
-    public function removePoll(Poll $poll): self
+    public function removePollChoice(PollChoice $pollChoice): self
     {
-        if ($this->polls->removeElement($poll)) {
-            $poll->removeUser($this);
+        if ($this->pollChoices->removeElement($pollChoice)) {
+            $pollChoice->removeUser($this);
         }
 
         return $this;
