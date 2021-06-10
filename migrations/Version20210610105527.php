@@ -19,6 +19,15 @@ final class Version20210610105527 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        $this->addSql('ALTER TABLE post DROP CONSTRAINT FK_5A8A6C8DF675F31B');
+        $this->addSql('ALTER TABLE post_likes DROP CONSTRAINT FK_DED1C292A76ED395');
+        $this->addSql('ALTER TABLE comment DROP CONSTRAINT FK_9474526C4B89032C');
+        $this->addSql('ALTER TABLE post_likes DROP CONSTRAINT FK_DED1C2924B89032C');
+        $this->addSql('DROP TABLE comment');
+        $this->addSql('DROP TABLE post_likes');
+        $this->addSql('DROP TABLE post');
+        $this->addSql('DROP TABLE app_user');
+
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SEQUENCE poll_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE poll_choice_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
