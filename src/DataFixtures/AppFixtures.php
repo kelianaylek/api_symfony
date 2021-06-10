@@ -3,6 +3,8 @@
 namespace App\DataFixtures;
 
 use App\Entity\Comment;
+use App\Entity\Poll;
+use App\Entity\PollChoice;
 use App\Entity\Post;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -54,11 +56,35 @@ class AppFixtures extends Fixture
 
                 for ($k = 1; $k <= 10; $k++) {
                     $comment = Comment::create(sprintf("Message %d", $k), $users[array_rand($users)], $post, "comment_image_url");
-
                     $post->addComment($comment);
-
                     $manager->persist($comment);
                     $manager->persist($post);
+                }
+
+                $value = rand(0,1) == 1;
+
+                if($value == true){
+                    $poll = new Poll;
+                    $poll->setPost($post);
+                    $post->setPoll($poll);
+                    $randomPollChoiceCount = rand(2, 6);
+
+                    for ($k = 0; $k <= $randomPollChoiceCount; $k++) {
+                        $pollChoice = new PollChoice;
+                        $pollChoice->setTitle("Title " . $k);
+                        $pollChoice->setPoll($poll);
+                        $poll->addPollChoice($pollChoice);
+                        shuffle($users);
+                        foreach (array_slice($users, 0, 5) as $userAnswersPoll) {
+                            $pollChoice->addUser($userAnswersPoll);
+                        }
+
+                        $manager->persist($pollChoice);
+
+                    }
+
+                    $manager->persist($post);
+                    $manager->persist($poll);
 
                 }
             }

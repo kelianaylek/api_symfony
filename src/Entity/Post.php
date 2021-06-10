@@ -22,7 +22,7 @@ class Post
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
-     * @Groups({"post"})
+     * @Groups({"post", "poll_post"})
      */
     private ?int $id = null;
 
@@ -66,7 +66,7 @@ class Post
 
     /**
      * @var Comment[]|Collection
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="post")
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="post", cascade={"persist", "remove"})
      * @Groups({"comment"})
      */
     private Collection $comments;
@@ -76,6 +76,12 @@ class Post
      * @Groups({"post"})
      */
     private ?string $image;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Poll::class, mappedBy="post", orphanRemoval=true)
+     * @Groups({"poll_posts"})
+     */
+    private ?Poll $poll;
 
     /**
      * @param string $content
@@ -215,6 +221,23 @@ class Post
     public function setAuthor(User $author): self
     {
         $this->author = $author;
+
+        return $this;
+    }
+
+    public function getPoll(): ?Poll
+    {
+        return $this->poll;
+    }
+
+    public function setPoll(Poll $poll): self
+    {
+        // set the owning side of the relation if necessary
+        if ($poll->getPost() !== $this) {
+            $poll->setPost($this);
+        }
+
+        $this->poll = $poll;
 
         return $this;
     }
