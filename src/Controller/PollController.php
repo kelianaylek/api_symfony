@@ -74,7 +74,6 @@ class PollController extends BaseController
     public function post(int $postId): JsonResponse
     {
         $userLoggedIn = $this->getUser();
-
         $post = $this->entityManager->getRepository(Post::class)->find($postId);
         $postAuthor = $post->getAuthor();
         if ($userLoggedIn !== $postAuthor) {
@@ -85,10 +84,8 @@ class PollController extends BaseController
         }
         $poll = new Poll;
         $poll->setPost($post);
-
         $this->entityManager->persist($poll);
         $this->entityManager->persist($post);
-
         $this->entityManager->flush();
 
         return $this->json($poll, 201, [], ["groups" => ["post", "user", "comment","likers", "poll", "poll_post", "poll_users", "poll_choices"]]);
@@ -104,15 +101,12 @@ class PollController extends BaseController
     {
         $pollChoice = new PollChoice;
         $poll = $this->entityManager->getRepository(Poll::class)->find($pollId);
-
         $post = $poll->getPost();
         $postAuthor = $post->getAuthor();
-
         $userLoggedIn = $this->getUser();
         if ($userLoggedIn == $postAuthor) {
             throw $this->createAccessDeniedException('Ce post ne vous appartient pas.');
         }
-
         $this->serializer->deserialize(
             $request->getContent(),
             PollChoice::class,
@@ -125,7 +119,6 @@ class PollController extends BaseController
         $poll->addPollChoice($pollChoice);
         $this->entityManager->persist($pollChoice);
         $this->entityManager->persist($poll);
-
         $this->entityManager->flush();
 
         return $this->json($poll, 200, [], ["groups" => ["post", "user", "poll", "poll_post", "poll_users", "poll_choices"]]);
@@ -192,13 +185,23 @@ class PollController extends BaseController
     public function addVoteToPollChoice($pollChoice): JsonResponse
     {
         $userLoggedIn = $this->getUser();
-        var_dump($userLoggedIn);
         $pollChoice = $this->entityManager->getRepository(PollChoice::class)->find($pollChoice);
-        $pollChoice->addUser($userLoggedIn);
+        $poll = $pollChoice->getPoll();
+
+        $pollChoicesInPoll = $poll->getPollChoices();
+        foreach ($pollChoicesInPoll as $pollChoiceInPoll){
+            $pollChoiceInPollUsers = $pollChoiceInPoll->getUsers();
+            foreach ($pollChoiceInPollUsers as $pollChoiceInPollUser){
+                if($pollChoiceInPollUser == $userLoggedIn){
+                    $pollChoiceInPoll->removeUser($pollChoiceInPollUser);
+                }
+                $pollChoice->addUser($userLoggedIn);
+            }
+        }
         $this->entityManager->persist($pollChoice);
         $this->entityManager->flush();
 
-        return $this->json($pollChoice, 200, [], ["groups" => ["post", "user", "poll", "poll_post", "poll_users", "poll_choices"]]);
+        return $this->json($poll, 200, [], ["groups" => ["post", "user", "poll", "poll_post", "poll_users", "poll_choices"]]);
 
     }
 

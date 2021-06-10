@@ -1,4 +1,6 @@
 security:
+    role_hierarchy:
+        ROLE_API: [ ROLE_USER ]
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     encoders:
         App\Entity\User:
@@ -13,6 +15,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         login:
+            pattern: ^/api/login_check
             stateless: true
             anonymous: true
             json_login:
@@ -21,6 +24,7 @@ security:
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
         api:
             stateless: true
+            anonymous: true
             guard:
                 authenticator:
                     - lexik_jwt_authentication.jwt_token_authenticator
@@ -36,5 +40,5 @@ security:
     access_control:
          #- { path: ^/api/comments, roles: IS_AUTHENTICATED_FULLY, methods: [POST, DELETE, PUT, PATCH] }
          #- { path: ^/api/posts, roles: IS_AUTHENTICATED_FULLY, methods: [POST, DELETE, PUT, PATCH] }
-        - { path: ^/api/polls, roles: IS_AUTHENTICATED_FULLY, methods: [POST, DELETE, PUT, PATCH] }
+         #- { path: ^/api/polls, roles: IS_AUTHENTICATED_FULLY, methods: [POST, DELETE, PUT, PATCH] }
 
