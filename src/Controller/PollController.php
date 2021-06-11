@@ -104,7 +104,7 @@ class PollController extends BaseController
         $post = $poll->getPost();
         $postAuthor = $post->getAuthor();
         $userLoggedIn = $this->getUser();
-        if ($userLoggedIn == $postAuthor) {
+        if ($userLoggedIn !== $postAuthor) {
             throw $this->createAccessDeniedException('Ce post ne vous appartient pas.');
         }
         $this->serializer->deserialize(
