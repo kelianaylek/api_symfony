@@ -195,9 +195,10 @@ class PollController extends BaseController
                 if($pollChoiceInPollUser == $userLoggedIn){
                     $pollChoiceInPoll->removeUser($pollChoiceInPollUser);
                 }
-                $pollChoice->addUser($userLoggedIn);
             }
         }
+        $pollChoice->addUser($userLoggedIn);
+
         $this->entityManager->persist($pollChoice);
         $this->entityManager->flush();
 
