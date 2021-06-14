@@ -1,6 +1,5 @@
 security:
     role_hierarchy:
-        ROLE_API: [ ROLE_USER ]
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     encoders:
         App\Entity\User:
