@@ -201,7 +201,7 @@ class GroupController extends BaseController
     }
 
     /**
-     * @Route("/message/{groupId}", name="api_groups_add_message_item_put", methods={"PUT"})
+     * @Route("/addMessage/{groupId}", name="api_groups_add_message_item_put", methods={"PUT"})
      */
     public function addMessage($groupId, Request $request): JsonResponse
     {
@@ -228,5 +228,28 @@ class GroupController extends BaseController
         throw $this->createAccessDeniedException('Vous ne faites pas partie de ce groupe.');
 
     }
+
+    /**
+     * @Route("/removeMessage/{groupId}/{messageId}", name="api_groups_remove_message_item_put", methods={"PUT"})
+     */
+    public function removeMessage($groupId, $messageId): JsonResponse
+    {
+        $group = $this->entityManager->getRepository(Group::class)->find($groupId);
+        if($group === null){
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
+        $message = $this->entityManager->getRepository(Message::class)->find($messageId);
+        if($message === null){
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
+        if($message->getAuthor() != $this->getUser()){
+            throw $this->createAccessDeniedException("Vous n\'êtes pas l'auteur de ce message");
+        }
+        $group->removeMessage($message);
+        $this->entityManager->persist($message);
+        $this->entityManager->persist($group);
+        $this->entityManager->flush();
+
+        return $this->json($group, Response::HTTP_CREATED, [], ["groups" => ["group", "group_users", "group_messages"]]);
+    }
 }
-g
