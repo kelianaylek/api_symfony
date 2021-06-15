@@ -35,8 +35,7 @@ class PollController extends BaseController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
         PostRepository $postRepository
-    )
-    {
+    ){
         $this->entityManager = $entityManager ;
         $this->pollRepository = $pollRepository ;
         $this->serializer = $serializer ;
@@ -166,15 +165,12 @@ class PollController extends BaseController
             if ($userLoggedIn !== $postAuthor) {
                 throw $this->createAccessDeniedException('Ce post ne vous appartient pas.');
             }
-
             $this->entityManager->remove($poll);
             $this->entityManager->flush();
 
             return $this->json(null, Response::HTTP_NO_CONTENT);
         }
         return $this->json(null, 404);
-
-
     }
 
     /**
@@ -187,7 +183,6 @@ class PollController extends BaseController
         $userLoggedIn = $this->getUser();
         $pollChoice = $this->entityManager->getRepository(PollChoice::class)->find($pollChoice);
         $poll = $pollChoice->getPoll();
-
         $pollChoicesInPoll = $poll->getPollChoices();
         foreach ($pollChoicesInPoll as $pollChoiceInPoll){
             $pollChoiceInPollUsers = $pollChoiceInPoll->getUsers();
@@ -198,12 +193,10 @@ class PollController extends BaseController
             }
         }
         $pollChoice->addUser($userLoggedIn);
-
         $this->entityManager->persist($pollChoice);
         $this->entityManager->flush();
 
         return $this->json($poll, 200, [], ["groups" => ["post", "user", "poll", "poll_post", "poll_users", "poll_choices"]]);
-
     }
-
 }
+
