@@ -112,7 +112,7 @@ class Group
         return $this;
     }
 
-    public function removeGroupAdmins(User $groupAdmins): self
+    public function removeGroupAdmin(User $groupAdmins): self
     {
         $this->groupAdmins->removeElement($groupAdmins);
 

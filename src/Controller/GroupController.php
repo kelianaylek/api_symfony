@@ -142,9 +142,35 @@ class GroupController extends BaseController
         }
         $admins = $group->getGroupAdmins();
         foreach ($admins as $admin){
-            if($admin === $this->getUser()){g
+            if($admin === $this->getUser()){
                 $group->addGroupAdmin($adminAdded);
                 $group->addUser($adminAdded);
+                $this->entityManager->persist($group);
+                $this->entityManager->flush();
+                return $this->json($group, Response::HTTP_CREATED, [], ["groups" => ["group", "group_users", "group_messages"]]);
+            }
+        }
+        throw $this->createAccessDeniedException("Vous n\'êtes pas admin de ce groupe.");
+
+    }
+
+    /**
+     * @Route("/removeAdmin/{groupId}/{userId}", name="api_groups_remove_admin_item_put", methods={"PUT"})
+     */
+    public function removeAdmin($groupId, $userId): JsonResponse
+    {
+        $group = $this->entityManager->getRepository(Group::class)->find($groupId);
+        if($group === null){
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
+        $adminRemoved = $this->entityManager->getRepository(User::class)->find($userId);
+        if($adminRemoved === null){
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
+        $admins = $group->getGroupAdmins();
+        foreach ($admins as $admin){
+            if($admin === $this->getUser()){
+                $group->removeGroupAdmin($adminRemoved);
                 $this->entityManager->persist($group);
                 $this->entityManager->flush();
                 return $this->json($group, Response::HTTP_CREATED, [], ["groups" => ["group", "group_users", "group_messages"]]);
