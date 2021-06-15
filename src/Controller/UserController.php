@@ -51,7 +51,7 @@ class UserController extends BaseController
     {
         $users = $this->userRepository->findAll();
 
-        return $this->json($users, 200, [], ["groups" => ["user", "posts", "post"]]);
+        return $this->json($users, Response::HTTP_OK, [], ["groups" => ["user", "posts", "post"]]);
     }
 
     /**
@@ -59,7 +59,7 @@ class UserController extends BaseController
      */
     public function item(User $user): JsonResponse
     {
-        return $this->json($user, 200, [], ["groups" => ["user", "posts", "post"]]);
+        return $this->json($user, Response::HTTP_OK, [], ["groups" => ["user", "posts", "post"]]);
     }
 
     /**

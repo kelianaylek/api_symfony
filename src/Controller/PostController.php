@@ -51,7 +51,7 @@ class PostController extends BaseController
     {
         $posts = $this->postRepository->findAll();
 
-        return $this->json($posts, 200, [], ["groups" => ["post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices"]]);
+        return $this->json($posts, Response::HTTP_OK, [], ["groups" => ["post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices"]]);
     }
 
     /**
@@ -61,7 +61,7 @@ class PostController extends BaseController
      */
     public function item(Post $post): JsonResponse
     {
-        return $this->json($post, 200, [], ["groups" => ["post", "user", "comment","likers", "poll", "poll_posts", "poll_choices"]]);
+        return $this->json($post, Response::HTTP_OK, [], ["groups" => ["post", "user", "comment","likers", "poll", "poll_posts", "poll_choices"]]);
     }
 
     /**
@@ -77,11 +77,14 @@ class PostController extends BaseController
             return $response;
         }
         $author = $this->entityManager->getRepository(User::class)->find($userId);
+        if($author === null){
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
         $post->setAuthor($author);
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
-        return $this->json($post, 201, [], ["groups" => ["post", "user", "comment","likers"]]);
+        return $this->json($post, Response::HTTP_CREATED, [], ["groups" => ["post", "user", "comment","likers"]]);
     }
 
     /**
@@ -103,7 +106,7 @@ class PostController extends BaseController
         }
         $this->entityManager->flush();
 
-        return $this->json($post, 200, [], ["groups" => ["post", "user", "comment","likers"]]);
+        return $this->json($post, Response::HTTP_CREATED, [], ["groups" => ["post", "user", "comment","likers"]]);
     }
 
     /**
@@ -126,16 +129,19 @@ class PostController extends BaseController
     {
         $userLoggedIn = $this->getUser();
         $userLoggedInId = $userLoggedIn->getId();
-        if ($userLoggedInId !== $id) {
+        if ($userLoggedInId != $userId) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas liker ce post avec ce compte.');
         }
         $post = $this->entityManager->getRepository(Post::class)->find($id);
+        if($post === null){
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
         $user = $this->entityManager->getRepository(User::class)->find($userId);
         $post->likeBy($user);
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
-        return $this->json($post, 201, [], ["groups" => ["post", "user", "comment","likers"]]);
+        return $this->json($post, Response::HTTP_CREATED, [], ["groups" => ["post", "user", "comment","likers"]]);
     }
 
     /**
@@ -145,15 +151,18 @@ class PostController extends BaseController
     {
         $userLoggedIn = $this->getUser();
         $userLoggedInId = $userLoggedIn->getId();
-        if ($userLoggedInId !== $id) {
+        if ($userLoggedInId != $userId) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas liker ce post avec ce compte.');
         }
         $post = $this->entityManager->getRepository(Post::class)->find($id);
+        if($post === null){
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
         $user = $this->entityManager->getRepository(User::class)->find($userId);
         $post->dislikeBy($user);
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
-        return $this->json($post, 201, [], ["groups" => ["post", "user", "comment","likers"]]);
+        return $this->json($post, Response::HTTP_CREATED, [], ["groups" => ["post", "user", "comment","likers"]]);
     }
 }

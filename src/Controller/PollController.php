@@ -44,9 +44,7 @@ class PollController extends BaseController
     }
 
     /**
-     * @return JsonResponse
      * @Route(name="api_polls_collection_get", methods={"GET"})
-     *
      */
     public function collection(): JsonResponse
     {
@@ -57,8 +55,6 @@ class PollController extends BaseController
 
     /**
      * @Route("/{id}", name="api_polls_item_get", methods={"GET"})
-     * @param Poll $poll
-     * @return JsonResponse
      */
     public function item(Poll $poll): JsonResponse
     {
@@ -67,8 +63,6 @@ class PollController extends BaseController
 
     /**
      * @Route("/{postId}", name="api_polls_collection_post", methods={"POST"})
-     * @param int $postId
-     * @return JsonResponse
      */
     public function post(int $postId): JsonResponse
     {
@@ -81,7 +75,7 @@ class PollController extends BaseController
         if($post->getPoll()){
             throw $this->createAccessDeniedException('Vous avez déjà créé un sondage pour ce post.');
         }
-        $poll = new Poll;
+        $poll = new Poll();
         $poll->setPost($post);
         $this->entityManager->persist($poll);
         $this->entityManager->persist($post);
@@ -98,7 +92,7 @@ class PollController extends BaseController
      */
         public function addPollChoice($pollId, Request $request): JsonResponse
     {
-        $pollChoice = new PollChoice;
+        $pollChoice = new PollChoice();
         $poll = $this->entityManager->getRepository(Poll::class)->find($pollId);
         $post = $poll->getPost();
         $postAuthor = $post->getAuthor();
@@ -125,12 +119,8 @@ class PollController extends BaseController
 
     /**
      * @Route("/removePollChoice/{pollId}/{pollChoiceId}", name="api_polls_item_remove_new_choice", methods={"PUT"})
-     * @param $pollId
-     * @param $pollChoiceId
-     * @param Request $request
-     * @return JsonResponse
      */
-    public function removePollChoice($pollId, $pollChoiceId, Request $request): JsonResponse
+    public function removePollChoice($pollId, $pollChoiceId): JsonResponse
     {
         $poll = $this->entityManager->getRepository(Poll::class)->find($pollId);
         $pollChoice = $this->entityManager->getRepository(PollChoice::class)->find($pollChoiceId);
@@ -152,8 +142,6 @@ class PollController extends BaseController
 
     /**
      * @Route("/{pollId}", name="api_polls_item_delete", methods={"DELETE"})
-     * @param $pollId
-     * @return JsonResponse
      */
     public function delete($pollId): JsonResponse
     {
@@ -170,13 +158,12 @@ class PollController extends BaseController
 
             return $this->json(null, Response::HTTP_NO_CONTENT);
         }
-        return $this->json(null, 404);
+
+        return $this->json(null, Response::HTTP_NOT_FOUND);
     }
 
     /**
      * @Route("/addVote/{pollChoice}", name="api_polls_item_add_poll_choice", methods={"PUT"})
-     * @param $pollChoice
-     * @return JsonResponse
      */
     public function addVoteToPollChoice($pollChoice): JsonResponse
     {
