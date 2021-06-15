@@ -2,7 +2,10 @@
 
 namespace App\DataFixtures;
 
+
 use App\Entity\Comment;
+use App\Entity\Group;
+use App\Entity\Message;
 use App\Entity\Poll;
 use App\Entity\PollChoice;
 use App\Entity\Post;
@@ -61,9 +64,9 @@ class AppFixtures extends Fixture
                     $manager->persist($post);
                 }
 
-                $value = rand(0,1) == 1;
+                $value = rand(0, 1) == 1;
 
-                if($value == true){
+                if ($value == true) {
                     $poll = new Poll;
                     $poll->setPost($post);
                     $post->setPoll($poll);
@@ -90,6 +93,30 @@ class AppFixtures extends Fixture
             }
         }
 
+        for ($k = 1; $k <= 10; $k++) {
+            $group = new Group();
+            $group->setName("Group " . $k);
+
+            $randomInt = rand(0, count($users));
+            $group->addAdmin($users[$randomInt]);
+            $group->addUser($users[$randomInt]);
+            shuffle($users);
+            foreach (array_slice($users, 0, 5) as $user) {
+                $group->addUser($user);
+            }
+            for ($l = 1; $l <= 10; $l++) {
+                $message = new Message();
+                $message->setContent("Message " . $l);
+                $randomInt = rand(0, count($users));
+                $message->setAuthor($users[$randomInt]);
+                $message->setInGroup($group);
+                $group->addMessage($message);
+                $manager->persist($group);
+                $manager->persist($message);
+            }
+
+        }
         $manager->flush();
+
     }
 }
