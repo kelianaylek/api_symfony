@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\CommentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
 use App\Entity\Post;
 use App\Entity\User;
@@ -49,7 +50,7 @@ class CommentController extends BaseController
     public function collection(): JsonResponse
     {
         $comments = $this->commentRepository->findAll();
-        return $this->json($comments, 200, [], ["groups" => ["comment", "user"] ]);
+        return $this->json($comments, Response::HTTP_OK, [], ["groups" => ["comment", "user"] ]);
     }
 
     /**
@@ -59,7 +60,7 @@ class CommentController extends BaseController
      */
     public function item(Comment $comment): JsonResponse
     {
-        return $this->json($comment, 200, [], ["groups" => ["comment", "user"]]);
+        return $this->json($comment, Response::HTTP_OK, [], ["groups" => ["comment", "user"]]);
     }
 
     /**
@@ -76,14 +77,19 @@ class CommentController extends BaseController
             return $response;
         }
         $author = $this->entityManager->getRepository(User::class)->find($userId);
+        if($author === null){
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
         $comment->setAuthor($author);
         $post = $this->entityManager->getRepository(Post::class)->find($postId);
+        if($post === null){
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
         $comment->setPost($post);
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
 
-        return $this->json($comment, 200, [], ["groups" => ["comment", "user"]]);
-
+        return $this->json($comment, Response::HTTP_OK, [], ["groups" => ["comment", "user"]]);
     }
 
     /**
@@ -105,7 +111,7 @@ class CommentController extends BaseController
         }
         $this->entityManager->flush();
 
-        return $this->json($comment, 200, [], ["groups" => ["comment", "user"]]);
+        return $this->json($comment, Response::HTTP_OK, [], ["groups" => ["comment", "user"]]);
     }
 
     /**
@@ -118,6 +124,6 @@ class CommentController extends BaseController
         $this->entityManager->remove($comment);
         $this->entityManager->flush();
 
-        return $this->json(204);
+        return $this->json(Response::HTTP_NO_CONTENT);
     }
 }
