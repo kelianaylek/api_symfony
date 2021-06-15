@@ -25,6 +25,7 @@ class Message
     /**
      * @ORM\Column(type="string", length=255)
      * @ORM\JoinTable(name="group_messages")
+     * @Groups({"group_messages"})
      * @Assert\NotBlank
      * @Assert\NotNull
      */

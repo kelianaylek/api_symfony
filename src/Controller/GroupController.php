@@ -252,4 +252,27 @@ class GroupController extends BaseController
 
         return $this->json($group, Response::HTTP_CREATED, [], ["groups" => ["group", "group_users", "group_messages"]]);
     }
+
+    /**
+     * @Route("/editMessage/{id}", name="api_groups_edit_message_item_put", methods={"PUT"})
+     */
+    public function editMessage(Message $message, Request $request): JsonResponse
+    {
+        if($message->getAuthor() != $this->getUser()){
+            throw $this->createAccessDeniedException("Vous n\'êtes pas l'auteur de ce message");
+        }
+        $this->serializer->deserialize(
+            $request->getContent(),
+            Message::class,
+            "json",
+            [AbstractNormalizer::OBJECT_TO_POPULATE => $message ]
+        );
+        if ($response = $this->postValidation($message, $this->validator)) {
+            return $response;
+        }
+        $this->entityManager->persist($message);
+        $this->entityManager->flush();
+
+        return $this->json($message, Response::HTTP_OK, [], ["groups" => ["group", "group_users", "group_messages"]]);
+    }
 }
