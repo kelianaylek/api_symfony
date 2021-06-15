@@ -89,9 +89,6 @@ class PostController extends BaseController
 
     /**
      * @Route("/{id}", name="api_posts_item_put", methods={"PUT"})
-     * @param Post $post
-     * @param Request $request
-     * @return JsonResponse
      */
     public function put(Post $post, Request $request): JsonResponse
     {

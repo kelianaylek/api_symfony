@@ -5,6 +5,9 @@ namespace App\Entity;
 use App\Repository\MessageRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
  * @ORM\Entity(repositoryClass=MessageRepository::class)
@@ -22,6 +25,8 @@ class Message
     /**
      * @ORM\Column(type="string", length=255)
      * @ORM\JoinTable(name="group_messages")
+     * @Assert\NotBlank
+     * @Assert\NotNull
      */
     private ?string $content;
 

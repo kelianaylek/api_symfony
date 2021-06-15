@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Group;
+use App\Entity\Message;
 use App\Entity\User;
 use App\Repository\GroupRepository;
 use Doctrine\ORM\EntityManager;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -198,5 +200,33 @@ class GroupController extends BaseController
         throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce groupe ce post avec ce compte (pas admin).');
     }
 
+    /**
+     * @Route("/message/{groupId}", name="api_groups_add_message_item_put", methods={"PUT"})
+     */
+    public function addMessage($groupId, Request $request): JsonResponse
+    {
+        $group = $this->entityManager->getRepository(Group::class)->find($groupId);
+        if($group === null){
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
+        $users = $group->getUsers();
+        foreach ($users as $user){
+            if($user === $this->getUser()){
+                $message = $this->serializer->deserialize($request->getContent(), Message::class, "json");
+                if ($response = $this->postValidation($message, $this->validator)) {
+                    return $response;
+                }
+                $message->setAuthor($this->getUser());
+                $message->setInGroup($group);
+                $this->entityManager->persist($message);
+                $this->entityManager->persist($group);
+                $this->entityManager->flush();
 
+                return $this->json($group, Response::HTTP_CREATED, [], ["groups" => ["group", "group_users", "group_messages"]]);
+            }
+        }
+        throw $this->createAccessDeniedException('Vous ne faites pas partie de ce groupe.');
+
+    }
 }
+g
