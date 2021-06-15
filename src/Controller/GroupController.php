@@ -128,6 +128,33 @@ class GroupController extends BaseController
     }
 
     /**
+     * @Route("/addAdmin/{groupId}/{userId}", name="api_groups_add_admin_item_put", methods={"PUT"})
+     */
+    public function addAdmin($groupId, $userId): JsonResponse
+    {
+        $group = $this->entityManager->getRepository(Group::class)->find($groupId);
+        if($group === null){
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
+        $adminAdded = $this->entityManager->getRepository(User::class)->find($userId);
+        if($adminAdded === null){
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
+        $admins = $group->getGroupAdmins();
+        foreach ($admins as $admin){
+            if($admin === $this->getUser()){g
+                $group->addGroupAdmin($adminAdded);
+                $group->addUser($adminAdded);
+                $this->entityManager->persist($group);
+                $this->entityManager->flush();
+                return $this->json($group, Response::HTTP_CREATED, [], ["groups" => ["group", "group_users", "group_messages"]]);
+            }
+        }
+        throw $this->createAccessDeniedException("Vous n\'êtes pas admin de ce groupe.");
+
+    }
+
+    /**
      * @Route("/{id}", name="api_group_item_delete", methods={"DELETE"})
      */
     public function delete(Group $group): JsonResponse
