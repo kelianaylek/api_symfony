@@ -97,8 +97,8 @@ class AppFixtures extends Fixture
             $group = new Group();
             $group->setName("Group " . $k);
 
-            $randomInt = rand(0, count($users));
-            $group->addAdmin($users[$randomInt]);
+            $randomInt = rand(0, count($users) - 1);
+            $group->addGroupAdmin($users[$randomInt]);
             $group->addUser($users[$randomInt]);
             shuffle($users);
             foreach (array_slice($users, 0, 5) as $user) {
@@ -107,7 +107,7 @@ class AppFixtures extends Fixture
             for ($l = 1; $l <= 10; $l++) {
                 $message = new Message();
                 $message->setContent("Message " . $l);
-                $randomInt = rand(0, count($users));
+                $randomInt = rand(0, count($users) -1);
                 $message->setAuthor($users[$randomInt]);
                 $message->setInGroup($group);
                 $group->addMessage($message);

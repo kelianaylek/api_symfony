@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Group;
 use App\Entity\User;
 use App\Repository\GroupRepository;
 use Doctrine\ORM\EntityManager;
@@ -40,126 +41,81 @@ class GroupController extends BaseController
     }
 
     /**
-     * @return JsonResponse
      * @Route(name="api_groups_collection_get", methods={"GET"})
-     *
      */
     public function collection(): JsonResponse
     {
         $groups = $this->groupRepository->findAll();
 
-        return $this->json($groups, Response::HTTP_OK, [], ["groups" => []]);
+        return $this->json($groups, Response::HTTP_OK, [], ["groups" => ["group", "group_users", "group_messages"]]);
     }
 
     /**
-     * @Route("/{id}", name="api_posts_item_get", methods={"GET"})
-     * @param Post $post
-     * @return JsonResponse
+     * @Route("/{id}", name="api_groups_item_get", methods={"GET"})
      */
-    public function item(Post $post): JsonResponse
+    public function item(Group $group): JsonResponse
     {
-        return $this->json($post, Response::HTTP_OK, [], ["groups" => ["post", "user", "comment","likers", "poll", "poll_posts", "poll_choices"]]);
+        return $this->json($group, Response::HTTP_OK, [], ["groups" => ["group", "group_users", "group_messages"]]);
     }
 
     /**
-     * @Route("/{userId}", name="api_posts_collection_post", methods={"POST"})
-     * @param Request $request
-     * @param int $userId
-     * @return JsonResponse
+     * @Route(name="api_groups_collection_post", methods={"POST"})
      */
-    public function post(Request $request, int $userId): JsonResponse
+    public function post(): JsonResponse
     {
-        $post = $this->serializer->deserialize($request->getContent(), Post::class, "json");
-        if ($response = $this->postValidation($post, $this->validator)) {
-            return $response;
-        }
-        $author = $this->entityManager->getRepository(User::class)->find($userId);
-        if($author === null){
+        $group = new Group();
+        $admin = $this->getUser();
+        $group->addGroupAdmin($admin);
+        $group->addUser($admin);
+        $group->setName("Nouveau groupe");
+
+        $this->entityManager->persist($group);
+        $this->entityManager->flush();
+
+        return $this->json($group, Response::HTTP_CREATED, [], ["groups" => ["group", "group_users", "group_messages"]]);
+    }
+
+    /**
+     * @Route("/addUser/{groupId}/{userId}", name="api_groups_item_put", methods={"PUT"})
+     */
+    public function addUser($groupId, $userId): JsonResponse
+    {
+        $group = $this->entityManager->getRepository(Group::class)->find($groupId);
+        if($group === null){
             return $this->json(null, Response::HTTP_NOT_FOUND);
         }
-        $post->setAuthor($author);
-        $this->entityManager->persist($post);
-        $this->entityManager->flush();
-
-        return $this->json($post, Response::HTTP_CREATED, [], ["groups" => ["post", "user", "comment","likers"]]);
-    }
-
-    /**
-     * @Route("/{id}", name="api_posts_item_put", methods={"PUT"})
-     * @param Post $post
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function put(Post $post, Request $request): JsonResponse
-    {
-        $this->serializer->deserialize(
-            $request->getContent(),
-            Post::class,
-            "json",
-            [AbstractNormalizer::OBJECT_TO_POPULATE => $post ]
-        );
-        if ($response = $this->postValidation($post, $this->validator)) {
-            return $response;
-        }
-        $this->entityManager->flush();
-
-        return $this->json($post, Response::HTTP_CREATED, [], ["groups" => ["post", "user", "comment","likers"]]);
-    }
-
-    /**
-     * @Route("/{id}", name="api_posts_item_delete", methods={"DELETE"})
-     * @param Post $post
-     * @return JsonResponse
-     */
-    public function delete(Post $post): JsonResponse
-    {
-        $this->entityManager->remove($post);
-        $this->entityManager->flush();
-
-        return $this->json(null, Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * @Route("/addLike/{id}/{userId}", name="api_posts_item_add_like", methods={"PUT"})
-     */
-    public function addLike($id, $userId): JsonResponse
-    {
-        $userLoggedIn = $this->getUser();
-        $userLoggedInId = $userLoggedIn->getId();
-        if ($userLoggedInId != $userId) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas liker ce post avec ce compte.');
-        }
-        $post = $this->entityManager->getRepository(Post::class)->find($id);
-        if($post === null){
+        $userAdded = $this->entityManager->getRepository(User::class)->find($userId);
+        if($userAdded === null){
             return $this->json(null, Response::HTTP_NOT_FOUND);
         }
-        $user = $this->entityManager->getRepository(User::class)->find($userId);
-        $post->likeBy($user);
-        $this->entityManager->persist($post);
-        $this->entityManager->flush();
+        $users = $group->getUsers();
+        foreach ($users as $user){
+            if($user === $this->getUser()){
+                $group->addUser($userAdded);
+                return $this->json($group, Response::HTTP_CREATED, [], ["groups" => ["group", "group_users", "group_messages"]]);
+            }
+        }
+        throw $this->createAccessDeniedException('Vous ne faites pas partie de ce groupe.');
 
-        return $this->json($post, Response::HTTP_CREATED, [], ["groups" => ["post", "user", "comment","likers"]]);
     }
 
     /**
-     * @Route("/removeLike/{id}/{userId}", name="api_posts_item_remove_like", methods={"PUT"})
+     * @Route("/{id}", name="api_group_item_delete", methods={"DELETE"})
      */
-    public function removeLike($id, $userId): JsonResponse
+    public function delete(Group $group): JsonResponse
     {
-        $userLoggedIn = $this->getUser();
-        $userLoggedInId = $userLoggedIn->getId();
-        if ($userLoggedInId != $userId) {
-            throw $this->createAccessDeniedException('Vous ne pouvez pas liker ce post avec ce compte.');
-        }
-        $post = $this->entityManager->getRepository(Post::class)->find($id);
-        if($post === null){
-            return $this->json(null, Response::HTTP_NOT_FOUND);
-        }
-        $user = $this->entityManager->getRepository(User::class)->find($userId);
-        $post->dislikeBy($user);
-        $this->entityManager->persist($post);
-        $this->entityManager->flush();
+        $group = $this->entityManager->getRepository(Group::class)->find($group);
+        $admins = $group->getGroupAdmins();
+        foreach ($admins as $admin){
+            if($admin === $this->getUser()){
+                $this->entityManager->remove($group);
+                $this->entityManager->flush();
 
-        return $this->json($post, Response::HTTP_CREATED, [], ["groups" => ["post", "user", "comment","likers"]]);
+                return $this->json(null, Response::HTTP_NO_CONTENT);
+            }
+        }
+        throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce groupe ce post avec ce compte (pas admin).');
     }
+
+
 }

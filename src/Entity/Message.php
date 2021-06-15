@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\MessageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=MessageRepository::class)
@@ -14,17 +15,20 @@ class Message
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"group_messages"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @ORM\JoinTable(name="group_messages")
      */
     private ?string $content;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="messages")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"group_messages"})
      */
     private ?User $author;
 

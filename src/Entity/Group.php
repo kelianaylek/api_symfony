@@ -6,6 +6,7 @@ use App\Repository\GroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=GroupRepository::class)
@@ -17,33 +18,39 @@ class Group
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"group"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"group"})
      */
     private ?string $name;
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="groups")
+     * @Groups({"group_users"})
      */
     private Collection $users;
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class)
+     * @ORM\JoinTable(name="group_admins")
+     * @Groups({"group_users"})
      */
-    private Collection $group_admins;
+    private Collection $groupAdmins;
 
     /**
      * @ORM\OneToMany(targetEntity=Message::class, mappedBy="inGroup", orphanRemoval=true)
+     * @Groups({"group_messages"})
      */
     private Collection $messages;
 
     public function __construct()
     {
         $this->users = new ArrayCollection();
-        $this->group_admins = new ArrayCollection();
+        $this->groupAdmins = new ArrayCollection();
         $this->messages = new ArrayCollection();
     }
 
@@ -91,23 +98,23 @@ class Group
     /**
      * @return Collection|User[]
      */
-    public function getGroupAdmin(): Collection
+    public function getGroupAdmins(): Collection
     {
-        return $this->group_admins;
+        return $this->groupAdmins;
     }
 
-    public function addGroupAdmin(User $group_admins): self
+    public function addGroupAdmin(User $groupAdmins): self
     {
-        if (!$this->group_admins->contains($group_admins)) {
-            $this->group_admins[] = $group_admins;
+        if (!$this->groupAdmins->contains($groupAdmins)) {
+            $this->groupAdmins[] = $groupAdmins;
         }
 
         return $this;
     }
 
-    public function removeGroupAdmin(User $group_admins): self
+    public function removeGroupAdmins(User $groupAdmins): self
     {
-        $this->group_admins->removeElement($group_admins);
+        $this->groupAdmins->removeElement($groupAdmins);
 
         return $this;
     }

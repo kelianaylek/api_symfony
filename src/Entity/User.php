@@ -24,7 +24,7 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
-     * @Groups({"user", "poll_users"})
+     * @Groups({"user", "poll_users", "group_users"})
      */
     private ?int $id = null;
 
@@ -54,7 +54,7 @@ class User implements UserInterface
     /**
      * @var string
      * @ORM\Column
-     * @Groups({"user"})
+     * @Groups({"user", "group_users"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Length(
