@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210616091735 extends AbstractMigration
+final class Version20210616092933 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -19,6 +19,13 @@ final class Version20210616091735 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        $this->addSql('DROP SEQUENCE app_user_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE comment_id_seq CASCADE');
+        //$this->addSql('DROP SEQUENCE "group_id_seq" CASCADE');
+        //$this->addSql('DROP SEQUENCE message_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE poll_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE poll_choice_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE post_id_seq CASCADE');
         $this->addSql('ALTER TABLE comment DROP CONSTRAINT FK_9474526CF675F31B');
         $this->addSql('ALTER TABLE group_user DROP CONSTRAINT FK_A4C98D39A76ED395');
         $this->addSql('ALTER TABLE group_admins DROP CONSTRAINT FK_7166CDDFA76ED395');
@@ -47,6 +54,13 @@ final class Version20210616091735 extends AbstractMigration
         $this->addSql('DROP TABLE post_likes');
 
         // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE SEQUENCE app_user_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE comment_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE "group_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE message_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE poll_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE poll_choice_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE post_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE TABLE app_user (id INT NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_88BDF3E9E7927C74 ON app_user (email)');
         $this->addSql('CREATE TABLE comment (id INT NOT NULL, author_id INT DEFAULT NULL, post_id INT DEFAULT NULL, message TEXT NOT NULL, published_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, image VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
@@ -112,6 +126,13 @@ final class Version20210616091735 extends AbstractMigration
         $this->addSql('ALTER TABLE comment DROP CONSTRAINT FK_9474526C4B89032C');
         $this->addSql('ALTER TABLE poll DROP CONSTRAINT FK_84BCFA454B89032C');
         $this->addSql('ALTER TABLE post_likes DROP CONSTRAINT FK_DED1C2924B89032C');
+        $this->addSql('DROP SEQUENCE app_user_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE comment_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE "group_id_seq" CASCADE');
+        $this->addSql('DROP SEQUENCE message_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE poll_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE poll_choice_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE post_id_seq CASCADE');
         $this->addSql('DROP TABLE app_user');
         $this->addSql('DROP TABLE comment');
         $this->addSql('DROP TABLE "group"');
