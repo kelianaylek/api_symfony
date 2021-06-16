@@ -19,14 +19,24 @@ final class Version20210610105527 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+        $this->addSql('ALTER TABLE comment DROP CONSTRAINT FK_9474526CF675F31B');
+        $this->addSql('ALTER TABLE poll_choice_user DROP CONSTRAINT FK_EA6E1E68A76ED395');
         $this->addSql('ALTER TABLE post DROP CONSTRAINT FK_5A8A6C8DF675F31B');
         $this->addSql('ALTER TABLE post_likes DROP CONSTRAINT FK_DED1C292A76ED395');
+        $this->addSql('ALTER TABLE poll_choice DROP CONSTRAINT FK_2DAE19C93C947C0F');
+        $this->addSql('ALTER TABLE poll_choice_user DROP CONSTRAINT FK_EA6E1E6852514F25');
         $this->addSql('ALTER TABLE comment DROP CONSTRAINT FK_9474526C4B89032C');
+        $this->addSql('ALTER TABLE poll DROP CONSTRAINT FK_84BCFA454B89032C');
         $this->addSql('ALTER TABLE post_likes DROP CONSTRAINT FK_DED1C2924B89032C');
-        $this->addSql('DROP TABLE comment');
-        $this->addSql('DROP TABLE post_likes');
-        $this->addSql('DROP TABLE post');
+        $this->addSql('DROP SEQUENCE poll_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE poll_choice_id_seq CASCADE');
         $this->addSql('DROP TABLE app_user');
+        $this->addSql('DROP TABLE comment');
+        $this->addSql('DROP TABLE poll');
+        $this->addSql('DROP TABLE poll_choice');
+        $this->addSql('DROP TABLE poll_choice_user');
+        $this->addSql('DROP TABLE post');
+        $this->addSql('DROP TABLE post_likes');
 
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SEQUENCE poll_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
