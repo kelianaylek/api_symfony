@@ -22,7 +22,7 @@ class Post
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
-     * @Groups({"post", "poll_post"})
+     * @Groups({"post", "poll_post", "event_post"})
      */
     private ?int $id = null;
 
@@ -82,6 +82,11 @@ class Post
      * @Groups({"poll_posts"})
      */
     private ?Poll $poll;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Event::class, inversedBy="post", cascade={"persist", "remove"})
+     */
+    private ?Event $event;
 
     /**
      * @param string $content
@@ -238,6 +243,18 @@ class Post
         }
 
         $this->poll = $poll;
+
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
 
         return $this;
     }
