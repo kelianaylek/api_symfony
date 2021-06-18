@@ -116,13 +116,10 @@ use Symfony\Component\HttpFoundation\Request;
             return $this->json(null, Response::HTTP_NOT_FOUND);
         }
         $event->addMember($member);
-
         $this->entityManager->persist($event);
-
         $this->entityManager->flush();
 
         return $this->json($event, Response::HTTP_OK, [], ["groups" => ["event", "event_owner", "event_member", "event_post"]]);
-
     }
 
     /**
@@ -147,5 +144,39 @@ use Symfony\Component\HttpFoundation\Request;
 
         return $this->json($event, Response::HTTP_OK, [], ["groups" => ["event", "event_owner", "event_member", "event_post"]]);
 
+    }
+
+    /**
+     * @Route("/participateToEvent/{id}", name="api_events_item_participate_to_event", methods={"PUT"})
+     */
+    public function participateToEvent(Event $event): JsonResponse
+    {
+        $userLoggedIn = $this->getUser();
+
+        if ($event->getPost() === null) {
+            throw $this->createAccessDeniedException("Cet évènement n'est pas public");
+        }
+
+        $event->addMember($userLoggedIn);
+        $this->entityManager->persist($event);
+        $this->entityManager->flush();
+
+        return $this->json($event, Response::HTTP_OK, [], ["groups" => ["event", "event_owner", "event_member", "event_post"]]);
+    }
+
+    /**
+     * @Route("/unParticipateToEvent/{id}", name="api_events_item_unparticipate_to_event", methods={"PUT"})
+     */
+    public function unParticipateToEvent(Event $event): JsonResponse
+    {
+        $userLoggedIn = $this->getUser();
+        if ($event->getPost() === null) {
+            throw $this->createAccessDeniedException("Cet évènement n'est pas public");
+        }
+        $event->removeMember($userLoggedIn);
+        $this->entityManager->persist($event);
+        $this->entityManager->flush();
+
+        return $this->json($event, Response::HTTP_OK, [], ["groups" => ["event", "event_owner", "event_member", "event_post"]]);
     }
 }

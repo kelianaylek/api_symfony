@@ -220,4 +220,6 @@ class PostController extends BaseController
 
         return $this->json($post, Response::HTTP_OK, [], ["groups" => ["post", "user", "post_event", "event"]]);
     }
+
+
 }
