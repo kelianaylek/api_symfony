@@ -85,6 +85,7 @@ class Post
 
     /**
      * @ORM\OneToOne(targetEntity=Event::class, inversedBy="post", cascade={"persist", "remove"})
+     * @Groups({"post_event"})
      */
     private ?Event $event;
 

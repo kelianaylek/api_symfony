@@ -60,58 +60,65 @@ class AppFixtures extends Fixture
             $manager->persist($event);
 
             for ($j = 1; $j <= 5; $j++) {
-            $post = Post::create("Content", $user, "image_url");
-            shuffle($users);
-            foreach (array_slice($users, 0, 5) as $userCanLike) {
-                $post->likeBy($userCanLike);
-            }
-            $event = new Event();
-            $event->setTitle("Titre Event d'un post");
-            $event->setDescription("Desc Event d'un post");
-            $event->setOwner($user);
-            $event->setStartDate(new DateTime("NOW"));
-            $event->setEndDate(new DateTime("NOW"));
-            shuffle($users);
-            foreach (array_slice($users, 0, 5) as $user) {
-                $event->addMember($user);
-            }
-            $post->setEvent($event);
-            $manager->persist($post);
+                $post = Post::create("Content", $user, "image_url");
+                shuffle($users);
+                foreach (array_slice($users, 0, 5) as $userCanLike) {
+                    $post->likeBy($userCanLike);
+                }
 
+                $value = rand(0, 1) == 1;
 
-            for ($k = 1; $k <= 10; $k++) {
-                $comment = Comment::create(sprintf("Message %d", $k), $users[array_rand($users)], $post, "comment_image_url");
-                $post->addComment($comment);
-                $manager->persist($comment);
-                $manager->persist($post);
-            }
-
-            $value = rand(0, 1) == 1;
-
-            if ($value == true) {
-                $poll = new Poll;
-                $poll->setPost($post);
-                $post->setPoll($poll);
-                $randomPollChoiceCount = rand(2, 6);
-
-                for ($k = 0; $k <= $randomPollChoiceCount; $k++) {
-                    $pollChoice = new PollChoice;
-                    $pollChoice->setTitle("Title " . $k);
-                    $pollChoice->setPoll($poll);
-                    $poll->addPollChoice($pollChoice);
+                if ($value == true) {
+                    $event = new Event();
+                    $event->setTitle("Titre Event d'un post");
+                    $event->setDescription("Desc Event d'un post");
+                    $event->setOwner($user);
+                    $event->setStartDate(new DateTime("NOW"));
+                    $event->setEndDate(new DateTime("NOW"));
                     shuffle($users);
-                    foreach (array_slice($users, 0, 5) as $userAnswersPoll) {
-                        $pollChoice->addUser($userAnswersPoll);
+                    foreach (array_slice($users, 0, 5) as $user) {
+                        $event->addMember($user);
                     }
-
-                    $manager->persist($pollChoice);
+                    $post->setEvent($event);
+                    $event->setPost($post);
+                    $manager->persist($post);
+                    $manager->persist($event);
 
                 }
 
-                $manager->persist($post);
-                $manager->persist($poll);
+                for ($k = 1; $k <= 10; $k++) {
+                    $comment = Comment::create(sprintf("Message %d", $k), $users[array_rand($users)], $post, "comment_image_url");
+                    $post->addComment($comment);
+                    $manager->persist($comment);
+                    $manager->persist($post);
+                }
 
-            }
+                $value = rand(0, 1) == 1;
+
+                if ($value == true) {
+                    $poll = new Poll;
+                    $poll->setPost($post);
+                    $post->setPoll($poll);
+                    $randomPollChoiceCount = rand(2, 6);
+
+                    for ($k = 0; $k <= $randomPollChoiceCount; $k++) {
+                        $pollChoice = new PollChoice;
+                        $pollChoice->setTitle("Title " . $k);
+                        $pollChoice->setPoll($poll);
+                        $poll->addPollChoice($pollChoice);
+                        shuffle($users);
+                        foreach (array_slice($users, 0, 5) as $userAnswersPoll) {
+                            $pollChoice->addUser($userAnswersPoll);
+                        }
+
+                        $manager->persist($pollChoice);
+
+                    }
+
+                    $manager->persist($post);
+                    $manager->persist($poll);
+
+                }
             }
         }
 
