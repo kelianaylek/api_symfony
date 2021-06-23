@@ -82,8 +82,6 @@ class PostController extends BaseController
             return $this->json(null, Response::HTTP_NOT_FOUND);
         }
         $post->setAuthor($author);
-        $post->setPost(null);
-
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
