@@ -24,7 +24,7 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
-     * @Groups({"user", "poll_users", "group_users"})
+     * @Groups({"user", "poll_users", "group_users", "event_owner", "event_member"})
      */
     private ?int $id = null;
 
@@ -54,7 +54,7 @@ class User implements UserInterface
     /**
      * @var string
      * @ORM\Column
-     * @Groups({"user", "group_users"})
+     * @Groups({"user", "group_users", "event_owner", "event_member"})
      * @Assert\NotBlank
      * @Assert\NotNull
      * @Assert\Length(
@@ -93,6 +93,17 @@ class User implements UserInterface
      */
     private Collection $messages;
 
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Event::class, mappedBy="members")
+     */
+    private Collection $events;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Event::class, mappedBy="owner", orphanRemoval=true)
+     */
+    private Collection $ownerEvents;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
@@ -100,6 +111,8 @@ class User implements UserInterface
         $this->pollChoices = new ArrayCollection();
         $this->groups = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->events = new ArrayCollection();
+        $this->ownerEvents = new ArrayCollection();
     }
 
     /**
@@ -312,6 +325,63 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($message->getAuthor() === $this) {
                 $message->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Event[]
+     */
+    public function getEvents(): Collection
+    {
+        return $this->events;
+    }
+
+    public function addEvent(Event $event): self
+    {
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->addMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): self
+    {
+        if ($this->events->removeElement($event)) {
+            $event->removeMember($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Event[]
+     */
+    public function getOwnerEvents(): Collection
+    {
+        return $this->ownerEvents;
+    }
+
+    public function addOwnerEvent(Event $ownerEvent): self
+    {
+        if (!$this->ownerEvents->contains($ownerEvent)) {
+            $this->ownerEvents[] = $ownerEvent;
+            $ownerEvent->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOwnerEvent(Event $ownerEvent): self
+    {
+        if ($this->ownerEvents->removeElement($ownerEvent)) {
+            // set the owning side to null (unless already changed)
+            if ($ownerEvent->getOwner() === $this) {
+                $ownerEvent->setOwner(null);
             }
         }
 

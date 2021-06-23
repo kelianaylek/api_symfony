@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Event;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Repository\PostRepository;
@@ -81,6 +82,8 @@ class PostController extends BaseController
             return $this->json(null, Response::HTTP_NOT_FOUND);
         }
         $post->setAuthor($author);
+        $post->setPost(null);
+
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
@@ -162,4 +165,61 @@ class PostController extends BaseController
 
         return $this->json($post, Response::HTTP_CREATED, [], ["groups" => ["post", "user", "comment","likers"]]);
     }
+
+    /**
+     * @Route("/addEvent/{id}/{eventId}", name="api_posts_item_add_event", methods={"PUT"})
+     */
+    public function addEvent(Post $post, $eventId): JsonResponse
+    {
+        $userLoggedIn = $this->getUser();
+        $postAuthor = $post->getAuthor();
+        if ($userLoggedIn != $postAuthor) {
+            throw $this->createAccessDeniedException('Ce post ne vous appartient pas.');
+        }
+        if($post->getEvent() != null ){
+            throw $this->createAccessDeniedException('Ce post a déjà un évènement associé.');
+        }
+        $event = $this->entityManager->getRepository(Event::class)->find($eventId);
+        if($event === null){
+            throw $this->createAccessDeniedException("Cet évènement n'existe pas.");
+        }
+        $eventAuthor = $event->getOwner();
+        if($eventAuthor != $userLoggedIn){
+            throw $this->createAccessDeniedException('Cet évènement ne vous appartient pas.');
+        }
+        $eventPost = $event->getPost();
+        if($eventPost != null){
+            throw $this->createAccessDeniedException('Cet évènement est déjà associé à un post.');
+        }
+        $post->setEvent($event);
+        $this->entityManager->persist($post);
+        $this->entityManager->flush();
+
+        return $this->json($post, Response::HTTP_OK, [], ["groups" => ["post", "user", "post_event", "event"]]);
+    }
+
+    /**
+     * @Route("/removeEvent/{id}", name="api_posts_item_remove_event", methods={"PUT"})
+     */
+    public function removeEvent(Post $post): JsonResponse
+    {
+        $userLoggedIn = $this->getUser();
+        $postAuthor = $post->getAuthor();
+        if ($userLoggedIn != $postAuthor) {
+            throw $this->createAccessDeniedException('Ce post ne vous appartient pas.');
+        }
+        if($post->getEvent() === null ){
+            throw $this->createAccessDeniedException("Ce post n'a pas d'évènement associé.");
+        }
+        $postEvent = $post->getEvent();
+        $post->setEvent(null);
+        $postEvent->setPost(null);
+        $this->entityManager->persist($post);
+        $this->entityManager->persist($postEvent);
+        $this->entityManager->flush();
+
+        return $this->json($post, Response::HTTP_OK, [], ["groups" => ["post", "user", "post_event", "event"]]);
+    }
+
+
 }
