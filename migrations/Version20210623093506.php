@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210623093505 extends AbstractMigration
+final class Version20210623093506 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -19,48 +19,6 @@ final class Version20210623093505 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE comment DROP CONSTRAINT FK_9474526CF675F31B');
-        $this->addSql('ALTER TABLE event DROP CONSTRAINT FK_3BAE0AA77E3C61F9');
-        $this->addSql('ALTER TABLE event_user DROP CONSTRAINT FK_92589AE2A76ED395');
-        $this->addSql('ALTER TABLE group_user DROP CONSTRAINT FK_A4C98D39A76ED395');
-        $this->addSql('ALTER TABLE group_admins DROP CONSTRAINT FK_7166CDDFA76ED395');
-        $this->addSql('ALTER TABLE message DROP CONSTRAINT FK_B6BD307FF675F31B');
-        $this->addSql('ALTER TABLE poll_choice_user DROP CONSTRAINT FK_EA6E1E68A76ED395');
-        $this->addSql('ALTER TABLE post DROP CONSTRAINT FK_5A8A6C8DF675F31B');
-        $this->addSql('ALTER TABLE post_likes DROP CONSTRAINT FK_DED1C292A76ED395');
-        $this->addSql('ALTER TABLE event_user DROP CONSTRAINT FK_92589AE271F7E88B');
-        $this->addSql('ALTER TABLE post DROP CONSTRAINT FK_5A8A6C8D71F7E88B');
-        $this->addSql('ALTER TABLE group_user DROP CONSTRAINT FK_A4C98D39FE54D947');
-        $this->addSql('ALTER TABLE group_admins DROP CONSTRAINT FK_7166CDDFFE54D947');
-        $this->addSql('ALTER TABLE message DROP CONSTRAINT FK_B6BD307FB9ADA51B');
-        $this->addSql('ALTER TABLE poll_choice DROP CONSTRAINT FK_2DAE19C93C947C0F');
-        $this->addSql('ALTER TABLE poll_choice_user DROP CONSTRAINT FK_EA6E1E6852514F25');
-        $this->addSql('ALTER TABLE comment DROP CONSTRAINT FK_9474526C4B89032C');
-        $this->addSql('ALTER TABLE poll DROP CONSTRAINT FK_84BCFA454B89032C');
-        $this->addSql('ALTER TABLE post_likes DROP CONSTRAINT FK_DED1C2924B89032C');
-        $this->addSql('DROP SEQUENCE app_user_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE comment_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE event_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE "group_id_seq" CASCADE');
-        $this->addSql('DROP SEQUENCE message_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE poll_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE poll_choice_id_seq CASCADE');
-        $this->addSql('DROP SEQUENCE post_id_seq CASCADE');
-        $this->addSql('DROP TABLE app_user');
-        $this->addSql('DROP TABLE comment');
-        $this->addSql('DROP TABLE event');
-        $this->addSql('DROP TABLE event_user');
-        $this->addSql('DROP TABLE "group"');
-        $this->addSql('DROP TABLE group_user');
-        $this->addSql('DROP TABLE group_admins');
-        $this->addSql('DROP TABLE message');
-        $this->addSql('DROP TABLE poll');
-        $this->addSql('DROP TABLE poll_choice');
-        $this->addSql('DROP TABLE poll_choice_user');
-        $this->addSql('DROP TABLE post');
-        $this->addSql('DROP TABLE post_likes');
-
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SEQUENCE app_user_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE comment_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
