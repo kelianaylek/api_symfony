@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20210623101106 extends AbstractMigration
+final class Version20210623101108 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,45 +20,45 @@ final class Version20210623101106 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SEQUENCE app_user_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE comment_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE event_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE "group_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE message_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE poll_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE poll_choice_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE SEQUENCE post_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
-        $this->addSql('CREATE TABLE app_user (id INT NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_88BDF3E9E7927C74 ON app_user (email)');
-        $this->addSql('CREATE TABLE comment (id INT NOT NULL, author_id INT DEFAULT NULL, post_id INT DEFAULT NULL, message TEXT NOT NULL, published_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, image VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE INDEX IDX_9474526CF675F31B ON comment (author_id)');
-        $this->addSql('CREATE INDEX IDX_9474526C4B89032C ON comment (post_id)');
+        $this->addSql('CREATE SEQUENCE IF NOT EXISTS app_user_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE IF NOT EXISTS comment_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE IF NOT EXISTS event_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE IF NOT EXISTS "group_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE IF NOT EXISTS message_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE IF NOT EXISTS poll_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE IF NOT EXISTS poll_choice_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE IF NOT EXISTS post_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE TABLE IF NOT EXISTS app_user  (id INT NOT NULL, email VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX IF NOT EXISTS UNIQ_88BDF3E9E7927C74 ON app_user (email)');
+        $this->addSql('CREATE TABLE IF NOT EXISTS comment (id INT NOT NULL, author_id INT DEFAULT NULL, post_id INT DEFAULT NULL, message TEXT NOT NULL, published_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, image VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_9474526CF675F31B ON comment (author_id)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_9474526C4B89032C ON comment (post_id)');
         $this->addSql('COMMENT ON COLUMN comment.published_at IS \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('CREATE TABLE event (id INT NOT NULL, owner_id INT DEFAULT NULL, title VARCHAR(255) NOT NULL, description VARCHAR(255) NOT NULL, start_date DATE NOT NULL, end_date DATE NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE INDEX IDX_3BAE0AA77E3C61F9 ON event (owner_id)');
-        $this->addSql('CREATE TABLE event_user (event_id INT NOT NULL, user_id INT NOT NULL, PRIMARY KEY(event_id, user_id))');
-        $this->addSql('CREATE INDEX IDX_92589AE271F7E88B ON event_user (event_id)');
-        $this->addSql('CREATE INDEX IDX_92589AE2A76ED395 ON event_user (user_id)');
-        $this->addSql('CREATE TABLE "group" (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE TABLE group_user (group_id INT NOT NULL, user_id INT NOT NULL, PRIMARY KEY(group_id, user_id))');
-        $this->addSql('CREATE INDEX IDX_A4C98D39FE54D947 ON group_user (group_id)');
-        $this->addSql('CREATE INDEX IDX_A4C98D39A76ED395 ON group_user (user_id)');
-        $this->addSql('CREATE TABLE group_admins (group_id INT NOT NULL, user_id INT NOT NULL, PRIMARY KEY(group_id, user_id))');
-        $this->addSql('CREATE INDEX IDX_7166CDDFFE54D947 ON group_admins (group_id)');
-        $this->addSql('CREATE INDEX IDX_7166CDDFA76ED395 ON group_admins (user_id)');
-        $this->addSql('CREATE TABLE message (id INT NOT NULL, author_id INT NOT NULL, in_group_id INT NOT NULL, content VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE INDEX IDX_B6BD307FF675F31B ON message (author_id)');
-        $this->addSql('CREATE INDEX IDX_B6BD307FB9ADA51B ON message (in_group_id)');
-        $this->addSql('CREATE TABLE poll (id INT NOT NULL, post_id INT NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_84BCFA454B89032C ON poll (post_id)');
-        $this->addSql('CREATE TABLE poll_choice (id INT NOT NULL, poll_id INT NOT NULL, title VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE INDEX IDX_2DAE19C93C947C0F ON poll_choice (poll_id)');
-        $this->addSql('CREATE TABLE poll_choice_user (poll_choice_id INT NOT NULL, user_id INT NOT NULL, PRIMARY KEY(poll_choice_id, user_id))');
-        $this->addSql('CREATE INDEX IDX_EA6E1E6852514F25 ON poll_choice_user (poll_choice_id)');
-        $this->addSql('CREATE INDEX IDX_EA6E1E68A76ED395 ON poll_choice_user (user_id)');
-        $this->addSql('CREATE TABLE post (id INT NOT NULL, author_id INT DEFAULT NULL, event_id INT DEFAULT NULL, content TEXT NOT NULL, published_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, image VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE INDEX IDX_5A8A6C8DF675F31B ON post (author_id)');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_5A8A6C8D71F7E88B ON post (event_id)');
+        $this->addSql('CREATE TABLE IF NOT EXISTS event (id INT NOT NULL, owner_id INT DEFAULT NULL, title VARCHAR(255) NOT NULL, description VARCHAR(255) NOT NULL, start_date DATE NOT NULL, end_date DATE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_3BAE0AA77E3C61F9 ON event (owner_id)');
+        $this->addSql('CREATE TABLE IF NOT EXISTS event_user (event_id INT NOT NULL, user_id INT NOT NULL, PRIMARY KEY(event_id, user_id))');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_92589AE271F7E88B ON event_user (event_id)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_92589AE2A76ED395 ON event_user (user_id)');
+        $this->addSql('CREATE TABLE IF NOT EXISTS "group" (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE IF NOT EXISTS group_user (group_id INT NOT NULL, user_id INT NOT NULL, PRIMARY KEY(group_id, user_id))');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_A4C98D39FE54D947 ON group_user (group_id)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_A4C98D39A76ED395 ON group_user (user_id)');
+        $this->addSql('CREATE TABLE IF NOT EXISTS group_admins (group_id INT NOT NULL, user_id INT NOT NULL, PRIMARY KEY(group_id, user_id))');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_7166CDDFFE54D947 ON group_admins (group_id)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_7166CDDFA76ED395 ON group_admins (user_id)');
+        $this->addSql('CREATE TABLE IF NOT EXISTS message (id INT NOT NULL, author_id INT NOT NULL, in_group_id INT NOT NULL, content VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_B6BD307FF675F31B ON message (author_id)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_B6BD307FB9ADA51B ON message (in_group_id)');
+        $this->addSql('CREATE TABLE IF NOT EXISTS poll (id INT NOT NULL, post_id INT NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX IF NOT EXISTS UNIQ_84BCFA454B89032C ON poll (post_id)');
+        $this->addSql('CREATE TABLE IF NOT EXISTS poll_choice (id INT NOT NULL, poll_id INT NOT NULL, title VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_2DAE19C93C947C0F ON poll_choice (poll_id)');
+        $this->addSql('CREATE TABLE IF NOT EXISTS poll_choice_user (poll_choice_id INT NOT NULL, user_id INT NOT NULL, PRIMARY KEY(poll_choice_id, user_id))');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_EA6E1E6852514F25 ON poll_choice_user (poll_choice_id)');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_EA6E1E68A76ED395 ON poll_choice_user (user_id)');
+        $this->addSql('CREATE TABLE IF NOT EXISTS post (id INT NOT NULL, author_id INT DEFAULT NULL, event_id INT DEFAULT NULL, content TEXT NOT NULL, published_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, image VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE INDEX IF NOT EXISTS IDX_5A8A6C8DF675F31B ON post (author_id)');
+        $this->addSql('CREATE UNIQUE INDEX IF NOT EXISTS UNIQ_5A8A6C8D71F7E88B ON post (event_id)');
         $this->addSql('COMMENT ON COLUMN post.published_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('CREATE TABLE post_likes (post_id INT NOT NULL, user_id INT NOT NULL, PRIMARY KEY(post_id, user_id))');
         $this->addSql('CREATE INDEX IDX_DED1C2924B89032C ON post_likes (post_id)');
