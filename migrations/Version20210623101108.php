@@ -19,6 +19,29 @@ final class Version20210623101108 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
+
+        $this->addSql('DROP SEQUENCE IF EXISTS app_user_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE IF EXISTS comment_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE IF EXISTS event_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE IF EXISTS "group_id_seq" CASCADE');
+        $this->addSql('DROP SEQUENCE IF EXISTS message_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE IF EXISTS poll_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE IF EXISTS poll_choice_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE IF EXISTS post_id_seq CASCADE');
+        $this->addSql('DROP TABLE IF EXISTS app_user');
+        $this->addSql('DROP TABLE IF EXISTS comment');
+        $this->addSql('DROP TABLE IF EXISTS event');
+        $this->addSql('DROP TABLE IF EXISTS event_user');
+        $this->addSql('DROP TABLE IF EXISTS "group"');
+        $this->addSql('DROP TABLE IF EXISTS group_user');
+        $this->addSql('DROP TABLE IF EXISTS group_admins');
+        $this->addSql('DROP TABLE IF EXISTS message');
+        $this->addSql('DROP TABLE IF EXISTS poll');
+        $this->addSql('DROP TABLE IF EXISTS poll_choice');
+        $this->addSql('DROP TABLE IF EXISTS poll_choice_user');
+        $this->addSql('DROP TABLE IF EXISTS post');
+        $this->addSql('DROP TABLE IF EXISTS post_likes');
+
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE SEQUENCE IF NOT EXISTS app_user_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE IF NOT EXISTS comment_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
