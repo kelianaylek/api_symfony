@@ -27,7 +27,9 @@ security:
             guard:
                 authenticator:
                     - lexik_jwt_authentication.jwt_token_authenticator
-
+        api_doc:
+            pattern: ^/api/doc
+            security: false
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
 

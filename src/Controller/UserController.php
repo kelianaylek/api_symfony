@@ -58,7 +58,7 @@ class UserController extends BaseController
      *     description="Returns all users",
      *     @SWG\Schema(
      *         type="array",
-     *         @SWG\Items(ref=@Model(type=User::class, groups={"user", "posts", "post}))
+     *         @SWG\Items(ref=@Model(type=User::class, groups={"user", "posts", "post"}))
      *     )
      * )
      * @SWG\Tag(name="users")
@@ -71,7 +71,20 @@ class UserController extends BaseController
     }
 
     /**
+     * List all users.
+     *
+     * This is the list of all users.
+     *
      * @Route("/{id}", name="api_users_item_get", methods={"GET"})
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns all users",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=User::class, groups={"user", "posts", "post"}))
+     *     )
+     * )
+     * @SWG\Tag(name="users")
      */
     public function item(User $user): JsonResponse
     {

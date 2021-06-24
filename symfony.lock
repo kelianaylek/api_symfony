@@ -295,6 +295,9 @@
             "public/.htaccess"
         ]
     },
+    "symfony/asset": {
+        "version": "v5.2.10"
+    },
     "symfony/browser-kit": {
         "version": "v5.2.10"
     },
@@ -521,6 +524,23 @@
     "symfony/translation-contracts": {
         "version": "v2.4.0"
     },
+    "symfony/twig-bridge": {
+        "version": "v5.2.10"
+    },
+    "symfony/twig-bundle": {
+        "version": "5.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "5.0",
+            "ref": "fab9149bbaa4d5eca054ed93f9e1b66cc500895d"
+        },
+        "files": [
+            "config/packages/test/twig.yaml",
+            "config/packages/twig.yaml",
+            "templates/base.html.twig"
+        ]
+    },
     "symfony/validator": {
         "version": "4.3",
         "recipe": {
@@ -545,6 +565,9 @@
     },
     "theseer/tokenizer": {
         "version": "1.2.0"
+    },
+    "twig/twig": {
+        "version": "v3.3.2"
     },
     "webmozart/assert": {
         "version": "1.10.0"

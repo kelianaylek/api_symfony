@@ -19,6 +19,7 @@
         "phpunit/phpunit": "^9.5",
         "sensio/framework-extra-bundle": "^6.1",
         "symfony/apache-pack": "^1.0",
+        "symfony/asset": "5.2.*",
         "symfony/browser-kit": "^5.2",
         "symfony/console": "5.2.*",
         "symfony/css-selector": "^5.2",
@@ -33,6 +34,7 @@
         "symfony/requirements-checker": "^2.0",
         "symfony/security-bundle": "5.2.*",
         "symfony/serializer": "5.2.*",
+        "symfony/twig-bundle": "5.2.*",
         "symfony/validator": "5.2.*",
         "symfony/yaml": "5.2.*"
     },

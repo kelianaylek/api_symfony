@@ -6,14 +6,7 @@ app.swagger:
 
 ## Requires the Asset component and the Twig bundle
 ## $ composer require twig asset
-#app.swagger_ui:
-#    path: /api/doc
-#    methods: GET
-#    defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
-
-nelmio_api_doc:
-    areas:
-        path_patterns: # an array of regexps
-            - ^/api(?!/doc$)
-        host_patterns:
-            - ^api\.
+app.swagger_ui:
+    path: /api/doc
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
