@@ -54,7 +54,7 @@ class UserController extends BaseController
      *
      * @Route(name="api_users_collection_get", methods={"GET"})
      * @SWG\Response(
-     *     response=200,
+     *     response=Response::HTTP_OK,
      *     description="Returns all users",
      *     @SWG\Schema(
      *         type="array",
@@ -71,14 +71,14 @@ class UserController extends BaseController
     }
 
     /**
-     * List all users.
+     * Return the specified user.
      *
-     * This is the list of all users.
+     * This call return a specific user.
      *
      * @Route("/{id}", name="api_users_item_get", methods={"GET"})
      * @SWG\Response(
-     *     response=200,
-     *     description="Returns all users",
+     *     response=Response::HTTP_OK,
+     *     description="Returns a specific user",
      *     @SWG\Schema(
      *         type="array",
      *         @SWG\Items(ref=@Model(type=User::class, groups={"user", "posts", "post"}))
