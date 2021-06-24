@@ -17,8 +17,11 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
 
-    /**
+/**
  * @Route("/api/users")
  */
 class UserController extends BaseController
@@ -45,7 +48,20 @@ class UserController extends BaseController
     }
 
     /**
+     * List all users.
+     *
+     * This is the list of all users.
+     *
      * @Route(name="api_users_collection_get", methods={"GET"})
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Returns all users",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=User::class, groups={"user", "posts", "post"}))
+     *     )
+     * )
+     * @SWG\Tag(name="users")
      */
     public function collection(): JsonResponse
     {
@@ -55,7 +71,20 @@ class UserController extends BaseController
     }
 
     /**
+     * Return the specified user.
+     *
+     * This call return a specific user.
+     *
      * @Route("/{id}", name="api_users_item_get", methods={"GET"})
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Returns a specific user",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=User::class, groups={"user", "posts", "post"}))
+     *     )
+     * )
+     * @SWG\Tag(name="users")
      */
     public function item(User $user): JsonResponse
     {
