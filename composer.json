@@ -14,6 +14,7 @@
         "doctrine/orm": "^2.8",
         "friendsofsymfony/rest-bundle": "^3.0",
         "lexik/jwt-authentication-bundle": "^2.11",
+        "nelmio/api-doc-bundle": "^3.0",
         "phpdocumentor/reflection-docblock": "^5.2",
         "phpunit/phpunit": "^9.5",
         "sensio/framework-extra-bundle": "^6.1",
