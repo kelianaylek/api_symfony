@@ -89,7 +89,7 @@ class User implements UserInterface
     private Collection $groups;
 
     /**
-     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="author")
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="author", orphanRemoval=true)
      */
     private Collection $messages;
 

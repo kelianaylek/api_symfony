@@ -52,7 +52,6 @@ class Post
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"post_author"})
-
      */
     private User $author;
 
