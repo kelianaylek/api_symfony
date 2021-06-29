@@ -84,6 +84,10 @@ class UserController extends BaseController
      *         @SWG\Items(ref=@Model(type=User::class, groups={"user", "posts", "post"}))
      *     )
      * )
+     *     @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="User not found"
+     *     ),
      * @SWG\Tag(name="users")
      */
     public function item(User $user): JsonResponse
@@ -92,7 +96,40 @@ class UserController extends BaseController
     }
 
     /**
+     * Post a new user.
+     * This call create a new user.
      * @Route(name="api_users_collection_post", methods={"POST"})
+     * @SWG\Parameter(
+     *          name="userCredentials",
+     *          in="body",
+     *          type="json",
+     *          description="User data",
+     *          required=true,
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(property="email", type="string"),
+     *              @SWG\Property(property="name", type="string"),
+     *              @SWG\Property(property="password", type="string")
+     *          )
+     *     ),
+     * @SWG\Parameter( name="Authorization", in="header", required=false, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_CREATED,
+     *     description="Returns a specific user",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=User::class, groups={"user", "posts", "post"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_BAD_REQUEST,
+     *         description="A problem occured with a field"
+     *     ),
+     * @SWG\Response(
+     *         response=Response::HTTP_FORBIDDEN,
+     *         description="You already have an account"
+     *     ),
+     * @SWG\Tag(name="users")
      */
     public function post(Request $request): JsonResponse
     {
@@ -107,27 +144,50 @@ class UserController extends BaseController
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        return $this->json($user, Response::HTTP_CREATED);
+        return $this->json($user, Response::HTTP_CREATED, [], ["groups" => ["user", "posts", "post"]]);
     }
 
     /**
+     * Delete a specified user.
+     *
+     * This call delete a specific user.
      * @Route("/{id}", name="api_users_item_delete", methods={"DELETE"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_NO_CONTENT,
+     *     description="User deleted successfully",
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="User not found"
+     *     ),
+     * @SWG\Response(
+     *         response=Response::HTTP_FORBIDDEN,
+     *         description="You cannot delete this user"
+     *     ),
+     * @SWG\Tag(name="users")
      */
-    public function delete(int $id): JsonResponse
+    public function delete(User $user): JsonResponse
     {
         $userLoggedIn = $this->getUser();
-        $userLoggedInId = $userLoggedIn->getId();
-        if ($userLoggedInId !== $id) {
+        if ($userLoggedIn !== $user) {
             throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer ce compte. !');
         }
-        $this->entityManager->remove($userLoggedIn);
+        $this->entityManager->remove($user);
         $this->entityManager->flush();
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
+     * Update user data.
+     * This call update user data.
      * @Route("/{id}", name="api_users_item_put", methods={"PUT"})
+     * @SWG\Response(
+     *         response=Response::HTTP_UNAUTHORIZED,
+     *         description="You can't update user data"
+     *     ),
+     * @SWG\Tag(name="users")
      */
     public function put(): JsonResponse
     {
@@ -135,7 +195,14 @@ class UserController extends BaseController
     }
 
     /**
+     * Update user data.
+     * This call update user data.
      * @Route("/{id}", name="api_users_item_patch", methods={"PATCH"})
+     * @SWG\Response(
+     *         response=Response::HTTP_UNAUTHORIZED,
+     *         description="You can't update user data"
+     *     ),
+     * @SWG\Tag(name="users")
      */
     public function patch(): JsonResponse
     {

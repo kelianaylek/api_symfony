@@ -37,6 +37,11 @@ class Poll
      */
     private Collection $pollChoices;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="poll")
+     */
+    private Collection $users;
+
     public function __construct()
     {
         $this->pollChoices = new ArrayCollection();
@@ -87,5 +92,21 @@ class Poll
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    /**
+     * @param Collection $users
+     */
+    public function setUsers(Collection $users): void
+    {
+        $this->users = $users;
     }
 }

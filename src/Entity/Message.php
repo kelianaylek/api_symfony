@@ -34,6 +34,7 @@ class Message
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="messages")
      * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"group_messages"})
      */
     private ?User $author;
