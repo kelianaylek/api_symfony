@@ -106,7 +106,6 @@ class GroupController extends BaseController
      * )
      * @SWG\Tag(name="groups")
      */
-
     public function post(): JsonResponse
     {
         $group = new Group();
