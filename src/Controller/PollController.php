@@ -17,6 +17,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
 
 /**
  * @Route("/api/polls")
@@ -44,7 +47,20 @@ class PollController extends BaseController
     }
 
     /**
+     * List all polls.
+     *
+     * This is the list of all polls.
+     *
      * @Route(name="api_polls_collection_get", methods={"GET"})
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Returns all polls",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Poll::class, groups={"poll", "poll_post", "poll_users", "poll_choices", "poll_users"}))
+     *     )
+     * )
+     * @SWG\Tag(name="polls")
      */
     public function collection(): JsonResponse
     {
@@ -54,7 +70,24 @@ class PollController extends BaseController
     }
 
     /**
+     * Return the specified poll.
+     *
+     * This call return a specific poll.
+     *
      * @Route("/{id}", name="api_polls_item_get", methods={"GET"})
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Returns a specific poll",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Poll::class, groups={"poll", "poll_post", "poll_users", "poll_choices", "poll_users"}))
+     *     )
+     * )
+     *     @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="Poll not found"
+     *     ),
+     * @SWG\Tag(name="polls")
      */
     public function item(Poll $poll): JsonResponse
     {
@@ -62,7 +95,23 @@ class PollController extends BaseController
     }
 
     /**
+     * Create a new poll.
+     * This call create a new poll.
      * @Route("/{postId}", name="api_polls_collection_post", methods={"POST"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_CREATED,
+     *     description="Returns a specific user",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Poll::class, groups={"poll", "poll_post", "poll_users", "poll_choices", "poll_users"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="This user does not exists"
+     *     ),
+     * @SWG\Tag(name="polls")
      */
     public function post(int $postId): JsonResponse
     {
@@ -88,10 +137,38 @@ class PollController extends BaseController
     }
 
     /**
+     * Update a post by adding a poll.
+     * This call update a post by adding a poll to it.
      * @Route("/addPollChoice/{pollId}", name="api_polls_item_add_new_choice", methods={"PUT"})
-     * @param $pollId
-     * @param Request $request
-     * @return JsonResponse
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Parameter(
+     *          name="poll data",
+     *          in="body",
+     *          type="json",
+     *          description="poll data",
+     *          required=true,
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(property="title", type="string"),
+     *          )
+     *     ),
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Returns a specific post after updated with a poll",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Poll::class, groups={"poll", "poll_post", "poll_users", "poll_choices", "poll_users"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_BAD_REQUEST,
+     *         description="A problem occured with a field"
+     *     ),
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="This poll does not exists"
+     *     ),
+     * @SWG\Tag(name="polls")
      */
         public function addPollChoice($pollId, Request $request): JsonResponse
     {
@@ -124,7 +201,23 @@ class PollController extends BaseController
     }
 
     /**
+     * Update a post by removing a poll.
+     * This call update a post by removing a poll to it.
      * @Route("/removePollChoice/{pollId}/{pollChoiceId}", name="api_polls_item_remove_new_choice", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Returns a specific post after updated with a poll",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Poll::class, groups={"poll", "poll_post", "poll_users", "poll_choices", "poll_users"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="This post or poll does not exists"
+     *     ),
+     * @SWG\Tag(name="polls")
      */
     public function removePollChoice($pollId, $pollChoiceId): JsonResponse
     {
@@ -151,7 +244,20 @@ class PollController extends BaseController
     }
 
     /**
+     * Delete a specified poll.
+     *
+     * This call delete a specific poll.
      * @Route("/{pollId}", name="api_polls_item_delete", methods={"DELETE"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_NO_CONTENT,
+     *     description="poll deleted successfully",
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="poll not found"
+     *     ),
+     * @SWG\Tag(name="polls")
      */
     public function delete($pollId): JsonResponse
     {
@@ -173,7 +279,23 @@ class PollController extends BaseController
     }
 
     /**
+     * Update a post by adding a vote to a poll choice.
+     * This call update a post by adding a vote to a poll choice.
      * @Route("/addVote/{pollChoice}", name="api_polls_item_add_poll_choice", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Returns a specific post after updated with a poll choice",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Poll::class, groups={"poll", "poll_post", "poll_users", "poll_choices", "poll_users"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="This poll does not exists"
+     *     ),
+     * @SWG\Tag(name="polls")
      */
     public function addVoteToPollChoice($pollChoice): JsonResponse
     {
