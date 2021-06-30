@@ -16,10 +16,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
 
 /**
- * Class GroupController
- * @package App\Controller
  * @Route("/api/groups")
  */
 class GroupController extends BaseController
@@ -43,7 +44,20 @@ class GroupController extends BaseController
     }
 
     /**
+     * List all groups.
+     *
+     * This is the list of all groups.
+     *
      * @Route(name="api_groups_collection_get", methods={"GET"})
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Returns all groups",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Group::class, groups={"group", "group_users", "group_messages"}))
+     *     )
+     * )
+     * @SWG\Tag(name="groups")
      */
     public function collection(): JsonResponse
     {
@@ -53,7 +67,24 @@ class GroupController extends BaseController
     }
 
     /**
+     * Return the specified group.
+     *
+     * This call return a specific group.
+     *
      * @Route("/{id}", name="api_groups_item_get", methods={"GET"})
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Returns a specific group",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Group::class, groups={"group", "group_users", "group_messages"}))
+     *     )
+     * )
+     *     @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="Group not found"
+     *     ),
+     * @SWG\Tag(name="groups")
      */
     public function item(Group $group): JsonResponse
     {
@@ -61,8 +92,21 @@ class GroupController extends BaseController
     }
 
     /**
+     * Create a new group.
+     * This call create a new group.
      * @Route(name="api_groups_collection_post", methods={"POST"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_CREATED,
+     *     description="Returns a specific group",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Group::class, groups={"group", "group_users", "group_messages"}))
+     *     )
+     * )
+     * @SWG\Tag(name="groups")
      */
+
     public function post(): JsonResponse
     {
         $group = new Group();
@@ -78,7 +122,23 @@ class GroupController extends BaseController
     }
 
     /**
+     * Update a group.
+     * This call add a user to a group.
      * @Route("/addUser/{groupId}/{userId}", name="api_groups_add_user_item_put", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_CREATED,
+     *     description="Returns a specific group after updated",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Group::class, groups={"group", "group_users", "group_messages"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="This user ou group does not exists"
+     *     ),
+     * @SWG\Tag(name="groups")
      */
     public function addUser($groupId, $userId): JsonResponse
     {
@@ -104,7 +164,27 @@ class GroupController extends BaseController
     }
 
     /**
+     * Update a group.
+     * This call remove a user from a group.
      * @Route("/removeUser/{groupId}/{userId}", name="api_groups_remove_user_item_put", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Remove a user from group",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Group::class, groups={"group", "group_users", "group_messages"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="This user ou group does not exists"
+     *     ),
+     * @SWG\Response(
+     *         response=Response::HTTP_FORBIDDEN,
+     *         description="You are not an admin of this group"
+     *     ),
+     * @SWG\Tag(name="groups")
      */
     public function removeUser($groupId, $userId): JsonResponse
     {
@@ -122,7 +202,7 @@ class GroupController extends BaseController
                 $group->removeUser($userRemoved);
                 $this->entityManager->persist($group);
                 $this->entityManager->flush();
-                return $this->json($group, Response::HTTP_NO_CONTENT, [], ["groups" => ["group", "group_users", "group_messages"]]);
+                return $this->json($group, Response::H, [], ["groups" => ["group", "group_users", "group_messages"]]);
             }
         }
         throw $this->createAccessDeniedException("Vous n\'êtes pas admin de ce groupe.");
@@ -130,7 +210,27 @@ class GroupController extends BaseController
     }
 
     /**
+     * Update a group.
+     * This call add an admin to a group.
      * @Route("/addAdmin/{groupId}/{userId}", name="api_groups_add_admin_item_put", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Add an admin to a group",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Group::class, groups={"group", "group_users", "group_messages"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="This user ou group does not exists"
+     *     ),
+     * @SWG\Response(
+     *         response=Response::HTTP_FORBIDDEN,
+     *         description="You are not an admin of this group"
+     *     ),
+     * @SWG\Tag(name="groups")
      */
     public function addAdmin($groupId, $userId): JsonResponse
     {
@@ -149,7 +249,7 @@ class GroupController extends BaseController
                 $group->addUser($adminAdded);
                 $this->entityManager->persist($group);
                 $this->entityManager->flush();
-                return $this->json($group, Response::HTTP_CREATED, [], ["groups" => ["group", "group_users", "group_messages"]]);
+                return $this->json($group, Response::HTTP_OK, [], ["groups" => ["group", "group_users", "group_messages"]]);
             }
         }
         throw $this->createAccessDeniedException("Vous n\'êtes pas admin de ce groupe.");
@@ -157,7 +257,27 @@ class GroupController extends BaseController
     }
 
     /**
+     * Update a group.
+     * This call remove an admin from a group.
      * @Route("/removeAdmin/{groupId}/{userId}", name="api_groups_remove_admin_item_put", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Remove an admin from group",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Group::class, groups={"group", "group_users", "group_messages"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="This user ou group does not exists"
+     *     ),
+     * @SWG\Response(
+     *         response=Response::HTTP_FORBIDDEN,
+     *         description="You are not an admin of this group"
+     *     ),
+     * @SWG\Tag(name="groups")
      */
     public function removeAdmin($groupId, $userId): JsonResponse
     {
@@ -175,7 +295,7 @@ class GroupController extends BaseController
                 $group->removeGroupAdmin($adminRemoved);
                 $this->entityManager->persist($group);
                 $this->entityManager->flush();
-                return $this->json($group, Response::HTTP_NO_CONTENT, [], ["groups" => ["group", "group_users", "group_messages"]]);
+                return $this->json($group, Response::HTTP_OK, [], ["groups" => ["group", "group_users", "group_messages"]]);
             }
         }
         throw $this->createAccessDeniedException("Vous n\'êtes pas admin de ce groupe.");
@@ -183,7 +303,20 @@ class GroupController extends BaseController
     }
 
     /**
+     * Delete a specified group.
+     *
+     * This call delete a specific group.
      * @Route("/{id}", name="api_group_item_delete", methods={"DELETE"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_NO_CONTENT,
+     *     description="group deleted successfully",
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="group not found"
+     *     ),
+     * @SWG\Tag(name="groups")
      */
     public function delete(Group $group): JsonResponse
     {
@@ -201,7 +334,38 @@ class GroupController extends BaseController
     }
 
     /**
+     * Update a group.
+     * This call add a message to a group.
      * @Route("/addMessage/{groupId}", name="api_groups_add_message_item_put", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Parameter(
+     *          name="message data",
+     *          in="body",
+     *          type="json",
+     *          description="Message data",
+     *          required=true,
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(property="content", type="string"),
+     *          )
+     *     ),
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Add a message to a group",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Group::class, groups={"group", "group_users", "group_messages"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="This group does not exists"
+     *     ),
+     * @SWG\Response(
+     *         response=Response::HTTP_FORBIDDEN,
+     *         description="You are not a member of this group"
+     *     ),
+     * @SWG\Tag(name="groups")
      */
     public function addMessage($groupId, Request $request): JsonResponse
     {
@@ -222,7 +386,7 @@ class GroupController extends BaseController
                 $this->entityManager->persist($group);
                 $this->entityManager->flush();
 
-                return $this->json($group, Response::HTTP_CREATED, [], ["groups" => ["group", "group_users", "group_messages"]]);
+                return $this->json($group, Response::HTTP_OK, [], ["groups" => ["group", "group_users", "group_messages"]]);
             }
         }
         throw $this->createAccessDeniedException('Vous ne faites pas partie de ce groupe.');
@@ -230,7 +394,29 @@ class GroupController extends BaseController
     }
 
     /**
+     */
+    /**
+     * Update a group.
+     * This call remove a message from a group.
      * @Route("/removeMessage/{groupId}/{messageId}", name="api_groups_remove_message_item_put", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Remove a message from a group",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Group::class, groups={"group", "group_users", "group_messages"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="This group or message does not exists"
+     *     ),
+     * @SWG\Response(
+     *         response=Response::HTTP_FORBIDDEN,
+     *         description="You are not the author of this message"
+     *     ),
+     * @SWG\Tag(name="groups")
      */
     public function removeMessage($groupId, $messageId): JsonResponse
     {
@@ -250,11 +436,42 @@ class GroupController extends BaseController
         $this->entityManager->persist($group);
         $this->entityManager->flush();
 
-        return $this->json($group, Response::HTTP_CREATED, [], ["groups" => ["group", "group_users", "group_messages"]]);
+        return $this->json($group, Response::HTTP_OK, [], ["groups" => ["group", "group_users", "group_messages"]]);
     }
 
     /**
+     * Update a group.
+     * This call edit a message from a group.
      * @Route("/editMessage/{id}", name="api_groups_edit_message_item_put", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Parameter(
+     *          name="message data",
+     *          in="body",
+     *          type="json",
+     *          description="Message data",
+     *          required=true,
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(property="content", type="string"),
+     *          )
+     *     ),
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Edit a message from a group",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Group::class, groups={"group", "group_users", "group_messages"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="This message does not exists"
+     *     ),
+     * @SWG\Response(
+     *         response=Response::HTTP_FORBIDDEN,
+     *         description="You are not the author of this message"
+     *     ),
+     * @SWG\Tag(name="groups")
      */
     public function editMessage(Message $message, Request $request): JsonResponse
     {
