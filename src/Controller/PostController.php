@@ -95,7 +95,7 @@ class PostController extends BaseController
     /**
      * Create a new post.
      * This call create a new post.
-     * @Route("/{userId}", name="api_posts_collection_post", methods={"POST"})
+     * @Route(name="api_posts_collection_post", methods={"POST"})
      * @SWG\Parameter(
      *          name="post data",
      *          in="body",
@@ -126,17 +126,17 @@ class PostController extends BaseController
      *     ),
      * @SWG\Tag(name="posts")
      */
-    public function post(Request $request, int $userId): JsonResponse
+    public function post(Request $request): JsonResponse
     {
         $post = $this->serializer->deserialize($request->getContent(), Post::class, "json");
         if ($response = $this->postValidation($post, $this->validator)) {
             return $response;
         }
-        $author = $this->entityManager->getRepository(User::class)->find($userId);
-        if($author === null){
+        $user = $this->getUser();
+        if($user === null){
             return $this->json(null, Response::HTTP_NOT_FOUND);
         }
-        $post->setAuthor($author);
+        $post->setAuthor($user);
         $this->entityManager->persist($post);
         $this->entityManager->flush();
 
