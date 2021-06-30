@@ -1,7 +1,6 @@
 nelmio_api_doc:
     documentation:
-        #host: apisymfonykelian.herokuapp.com
-        host: 127.0.0.1:42381
+        host: apisymfonykelian.herokuapp.com
         schemes: [ http, https ]
         info:
             title: My App
