@@ -96,6 +96,7 @@ class PostController extends BaseController
      * Create a new post.
      * This call create a new post.
      * @Route(name="api_posts_collection_post", methods={"POST"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
      * @SWG\Parameter(
      *          name="post data",
      *          in="body",
@@ -220,6 +221,7 @@ class PostController extends BaseController
      * Add a like to post.
      * This call update a post by adding a like.
      * @Route("/addLike/{id}", name="api_posts_item_add_like", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
      * @SWG\Response(
      *     response=Response::HTTP_CREATED,
      *     description="Returns a specific post after updated with a like",
@@ -252,6 +254,7 @@ class PostController extends BaseController
      * Remove a like from post.
      * This call update a post by removing a like.
      * @Route("/removeLike/{id}", name="api_posts_item_remove_like", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
      * @SWG\Response(
      *     response=Response::HTTP_CREATED,
      *     description="Returns a specific post after updated with a like",
@@ -284,6 +287,7 @@ class PostController extends BaseController
      * Add event to post.
      * This call update a post by adding an event.
      * @Route("/addEvent/{id}/{eventId}", name="api_posts_item_add_event", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
      * @SWG\Response(
      *     response=Response::HTTP_OK,
      *     description="Returns a specific post after updated with an event",
@@ -335,6 +339,7 @@ class PostController extends BaseController
      * Remove event to post.
      * This call update a post by removing an event.
      * @Route("/removeEvent/{id}", name="api_posts_item_remove_event", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
      * @SWG\Response(
      *     response=Response::HTTP_OK,
      *     description="Returns a specific post after updated with an event",
@@ -372,6 +377,4 @@ class PostController extends BaseController
 
         return $this->json($post, Response::HTTP_OK, [], ["groups" => ["post", "user", "post_event", "event"]]);
     }
-
-
 }
