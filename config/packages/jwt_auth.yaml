@@ -1,0 +1,4 @@
+jwt_auth:
+  domain: dev-naylek.eu.auth0.com
+  authorized_issuer: https://YOUR_AUTH0_DOMAIN/
+  api_identifier: https://apisymfonykelian.herokuapp.com/api

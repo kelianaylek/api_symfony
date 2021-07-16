@@ -208,4 +208,31 @@ class UserController extends BaseController
     {
         throw $this->createAccessDeniedException('Vous ne pouvez pas modifier ces informations !');
     }
+
+    /**
+     * Return the connected user.
+     *
+     * This call return a specific user.
+     *
+     * @Route("/connected", name="api_users_item_get", methods={"GET"})
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Returns the connected",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=User::class, groups={"user", "posts", "post"}))
+     *     )
+     * )
+     *     @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="User not found"
+     *     ),
+     * @SWG\Tag(name="users")
+     */
+    public function getConnectedUser(): JsonResponse
+    {
+        $user = $this->getUser();
+
+        return $this->json($user, Response::HTTP_OK, [], ["groups" => ["user", "posts", "post"]]);
+    }
 }
