@@ -79,7 +79,6 @@ class PostController extends BaseController
      *     @SWG\Schema(
      *         type="array",
      *         @SWG\Items(ref=@Model(type=Post::class, groups={"post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices", "post_event", "event"}))
-     *         @SWG\Items(ref=@Model(type=Post::class, groups={"post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices", "post_event", "event"}))
      *     )
      * )
      *     @SWG\Response(
