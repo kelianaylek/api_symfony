@@ -329,7 +329,9 @@ class PostController extends BaseController
             throw $this->createAccessDeniedException('Cet évènement est déjà associé à un post.');
         }
         $post->setEvent($event);
+        $event->setPost($post);
         $this->entityManager->persist($post);
+        $this->entityManager->persist($event);
         $this->entityManager->flush();
 
         return $this->json($post, Response::HTTP_OK, [], ["groups" => ["post", "user", "post_event", "event"]]);
