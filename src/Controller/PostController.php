@@ -55,7 +55,7 @@ class PostController extends BaseController
      *     description="Returns all posts",
      *     @SWG\Schema(
      *         type="array",
-     *         @SWG\Items(ref=@Model(type=Post::class, groups={"post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices", "post_event", "event", "poll_users}))
+     *         @SWG\Items(ref=@Model(type=Post::class, groups={"post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices", "post_event", "event"}))
      *     )
      * )
      * @SWG\Tag(name="posts")
@@ -89,7 +89,7 @@ class PostController extends BaseController
      */
     public function item(Post $post): JsonResponse
     {
-        return $this->json($post, Response::HTTP_OK, [], ["groups" => ["post", "user", "comment","likers", "poll", "poll_posts", "poll_choices", "post_event", "event"]]);
+        return $this->json($post, Response::HTTP_OK, [], ["groups" => ["post", "user", "comment","likers", "poll", "poll_posts", "poll_choices", "post_event", "event", "poll_users"]]);
     }
 
     /**
