@@ -78,7 +78,7 @@ class Post
 
     /**
      * @ORM\OneToOne(targetEntity=Poll::class, mappedBy="post", orphanRemoval=true)
-     * @Groups({"poll_posts"})
+     * @Groups({"poll_posts", "poll_users"})
      */
     private ?Poll $poll;
 

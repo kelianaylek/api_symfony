@@ -55,7 +55,7 @@ class PostController extends BaseController
      *     description="Returns all posts",
      *     @SWG\Schema(
      *         type="array",
-     *         @SWG\Items(ref=@Model(type=Post::class, groups={"post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices", "post_event", "event"}))
+     *         @SWG\Items(ref=@Model(type=Post::class, groups={"post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices", "post_event", "event", "poll_users}))
      *     )
      * )
      * @SWG\Tag(name="posts")
@@ -64,7 +64,7 @@ class PostController extends BaseController
     {
         $posts = $this->postRepository->findAll();
 
-        return $this->json($posts, Response::HTTP_OK, [], ["groups" => ["post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices", "post_event", "event"]]);
+        return $this->json($posts, Response::HTTP_OK, [], ["groups" => ["post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices", "post_event", "event", "poll_users"]]);
     }
 
     /**
