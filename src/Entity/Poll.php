@@ -39,7 +39,6 @@ class Poll
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="poll")
-     * @Groups({"poll_users"})
      */
     private Collection $users;
 
