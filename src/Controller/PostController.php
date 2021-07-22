@@ -64,7 +64,7 @@ class PostController extends BaseController
     {
         $posts = $this->postRepository->findAll();
 
-        return $this->json($posts, Response::HTTP_OK, [], ["groups" => ["post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices", "post_event", "event"]]);
+        return $this->json($posts, Response::HTTP_OK, [], ["groups" => ["post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices", "post_event", "event", "post_author"]]);
     }
 
     /**
