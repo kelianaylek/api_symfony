@@ -89,7 +89,7 @@ class PostController extends BaseController
      */
     public function item(Post $post): JsonResponse
     {
-        return $this->json($post, Response::HTTP_OK, [], ["groups" => ["post", "user", "comment","likers", "poll", "poll_posts", "poll_choices", "post_event", "event"]]);
+        return $this->json($post, Response::HTTP_OK, [], ["groups" => ["post", "user", "comment","likers", "poll", "poll_posts", "poll_choices", "post_event", "event", "post_author"]]);
     }
 
     /**
