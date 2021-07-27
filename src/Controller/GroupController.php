@@ -551,7 +551,7 @@ class GroupController extends BaseController
     /**
      * Leave a group.
      * A user leave a group.
-     * @Route("/leave/{id}", name="api_groups_leave__put", methods={"PUT"})
+     * @Route("/leave/{groupId}", name="api_groups_leave_put", methods={"PUT"})
      * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
      * @SWG\Response(
      *     response=Response::HTTP_OK,
