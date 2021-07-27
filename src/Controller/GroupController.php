@@ -548,6 +548,29 @@ class GroupController extends BaseController
         return $this->json($message, Response::HTTP_OK, [], ["groups" => ["group", "group_users", "group_messages"]]);
     }
 
+    /**
+     * Leave a group.
+     * A user leave a group.
+     * @Route("/leave/{id}", name="api_groups_leave__put", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="User leaves the group",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Group::class, groups={"group", "group_users", "group_messages"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="This group does not exists"
+     *     ),
+     * @SWG\Response(
+     *         response=Response::HTTP_FORBIDDEN,
+     *         description="You are not into this group"
+     *     ),
+     * @SWG\Tag(name="groups")
+     */
     public function leaveGroup($groupId): JsonResponse
     {
         $group = $this->entityManager->getRepository(Group::class)->find($groupId);
