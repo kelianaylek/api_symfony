@@ -201,7 +201,7 @@ class GroupController extends BaseController
                 $group->removeUser($userRemoved);
                 $this->entityManager->persist($group);
                 $this->entityManager->flush();
-                return $this->json($group, Response::H, [], ["groups" => ["group", "group_users", "group_messages"]]);
+                return $this->json($group, Response::HTTP_OK, [], ["groups" => ["group", "group_users", "group_messages"]]);
             }
         }
         throw $this->createAccessDeniedException("Vous n\'êtes pas admin de ce groupe.");
