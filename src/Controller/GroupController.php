@@ -122,6 +122,63 @@ class GroupController extends BaseController
 
     /**
      * Update a group.
+     * This call edit the name of a group.
+     * @Route("/{id}", name="api_groups_item_put", methods={"PUT"})
+     * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
+     * @SWG\Parameter(
+     *          name="name data",
+     *          in="body",
+     *          type="json",
+     *          description="Name data",
+     *          required=true,
+     *          @SWG\Schema(
+     *              type="object",
+     *              @SWG\Property(property="name", type="string"),
+     *          )
+     *     ),
+     * @SWG\Response(
+     *     response=Response::HTTP_OK,
+     *     description="Edit the title of a group",
+     *     @SWG\Schema(
+     *         type="array",
+     *         @SWG\Items(ref=@Model(type=Group::class, groups={"group", "group_users", "group_messages"}))
+     *     )
+     * )
+     * @SWG\Response(
+     *         response=Response::HTTP_NOT_FOUND,
+     *         description="This group does not exists"
+     *     ),
+     * @SWG\Response(
+     *         response=Response::HTTP_FORBIDDEN,
+     *         description="You are not admin of this group"
+     *     ),
+     * @SWG\Tag(name="groups")
+     */
+    public function put(Group $group, Request $request): JsonResponse
+    {
+        $this->serializer->deserialize(
+            $request->getContent(),
+            Group::class,
+            "json",
+            [AbstractNormalizer::OBJECT_TO_POPULATE => $group ]
+        );
+
+        $admins = $group->getGroupAdmins();
+        foreach ($admins as $admin){
+            if($admin === $this->getUser()){
+                if ($response = $this->postValidation($group, $this->validator)) {
+                    return $response;
+                }
+                $this->entityManager->flush();
+
+                return $this->json($group, Response::HTTP_OK, [], ["groups" => ["group", "group_users", "group_messages"]]);
+            }
+        }
+        throw $this->createAccessDeniedException("Vous n\'êtes pas admin de ce groupe.");
+    }
+
+    /**
+     * Update a group.
      * This call add a user to a group.
      * @Route("/addUser/{groupId}/{userId}", name="api_groups_add_user_item_put", methods={"PUT"})
      * @SWG\Parameter( name="Authorization", in="header", required=true, type="string", default="Bearer TOKEN", description="Authorization" )
@@ -252,7 +309,6 @@ class GroupController extends BaseController
             }
         }
         throw $this->createAccessDeniedException("Vous n\'êtes pas admin de ce groupe.");
-
     }
 
     /**
@@ -490,5 +546,38 @@ class GroupController extends BaseController
         $this->entityManager->flush();
 
         return $this->json($message, Response::HTTP_OK, [], ["groups" => ["group", "group_users", "group_messages"]]);
+    }
+
+    public function leaveGroup($groupId): JsonResponse
+    {
+        $group = $this->entityManager->getRepository(Group::class)->find($groupId);
+        if($group === null){
+            return $this->json(null, Response::HTTP_NOT_FOUND);
+        }
+        $userConnected = $this->getUser();
+        $isInGroup = false;
+
+        $users = $group->getUsers();
+        foreach ($users as $user){
+            if($user === $userConnected){
+                $isInGroup = true;
+                $group->removeUser($user);
+                $this->entityManager->persist($group);
+                $this->entityManager->flush();
+            }
+        }
+        if(!$isInGroup){
+            throw $this->createAccessDeniedException("Vous n\'êtes pas membre de ce groupe.");
+        }
+        $admins = $group->getGroupAdmins();
+        foreach ($admins as $admin){
+            if($admin === $userConnected){
+                $group->removeGroupAdmin($admin);
+                $this->entityManager->persist($group);
+                $this->entityManager->flush();
+            }
+        }
+
+        return $this->json($group, Response::HTTP_OK, [], ["groups" => ["group", "group_users", "group_messages"]]);
     }
 }
