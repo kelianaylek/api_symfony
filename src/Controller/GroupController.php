@@ -61,8 +61,14 @@ class GroupController extends BaseController
      */
     public function collection(): JsonResponse
     {
-        $groups = $this->groupRepository->findAll();
-
+        $em = $this->getDoctrine()->getManager();
+        $groups = $em
+            ->getRepository(Group::class)
+            ->createQueryBuilder('e')
+            ->addOrderBy('e.id', 'DESC')
+            ->getQuery()
+            ->execute()
+        ;
         return $this->json($groups, Response::HTTP_OK, [], ["groups" => ["group", "group_users", "group_messages"]]);
     }
 

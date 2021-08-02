@@ -59,7 +59,14 @@ class EventController extends BaseController
      */
     public function collection(): JsonResponse
     {
-        $events = $this->eventRepository->findAll();
+        $em = $this->getDoctrine()->getManager();
+        $events = $em
+            ->getRepository(Event::class)
+            ->createQueryBuilder('e')
+            ->addOrderBy('e.id', 'DESC')
+            ->getQuery()
+            ->execute()
+        ;
         return $this->json($events, Response::HTTP_OK, [], ["groups" => ["event", "event_owner", "event_member", "event_post"] ]);
     }
 

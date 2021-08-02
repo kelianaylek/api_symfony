@@ -63,7 +63,6 @@ class PostController extends BaseController
      */
     public function collection(): JsonResponse
     {
-        //$posts = $this->postRepository->findAll();
 
         $em = $this->getDoctrine()->getManager();
         $posts = $em
