@@ -21,6 +21,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Swagger\Annotations as SWG;
 
+
 /**
  * @Route("/api/posts")
  */
@@ -62,7 +63,16 @@ class PostController extends BaseController
      */
     public function collection(): JsonResponse
     {
-        $posts = $this->postRepository->findAll();
+        //$posts = $this->postRepository->findAll();
+
+        $em = $this->getDoctrine()->getManager();
+        $posts = $em
+            ->getRepository(Post::class)
+            ->createQueryBuilder('e')
+            ->addOrderBy('e.id', 'DESC')
+            ->getQuery()
+            ->execute()
+        ;
 
         return $this->json($posts, Response::HTTP_OK, [], ["groups" => ["post", "user", "comment", "likers", "poll", "poll_posts", "poll_choices", "post_event", "event", "post_author"]]);
     }
